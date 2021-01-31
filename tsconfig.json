@@ -10,8 +10,12 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true
+    "baseUrl": "./src",
+    "incremental": true,
+    "paths": {
+      "@features/*": ["features/*"],
+      "@config/*": ["config/*"],
+    }
   },
   "exclude": ["node_modules", "dist", "graphql"]
 }

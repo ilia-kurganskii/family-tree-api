@@ -1,33 +1,33 @@
 import { GraphQLModule } from '@nestjs/graphql';
 import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
-import { AppController } from './controllers/app.controller';
-import { AppService } from './services/app.service';
-import { AuthModule } from './resolvers/auth/auth.module';
-import { UserModule } from './resolvers/user/user.module';
-import { PostModule } from './resolvers/post/post.module';
-import { AppResolver } from './resolvers/app.resolver';
-import { DateScalar } from './common/scalars/date.scalar';
+import { AuthModule } from '@features/auth/auth.module';
+import { UserModule } from '@features/users/user.module';
+import { DateScalar } from '@features/common/scalars/date.scalar';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import config from './configs/config';
-import { GraphqlConfig } from './configs/config.interface';
-import { LoggerModule } from './common/logger/logger.module';
-import { TraceLoggerService } from './common/logger/trace-logger/trace-logger.service';
-import { LoggerMiddleware } from './common/logger/logger-middleware/logger.middleware';
-import { WinstonLoggerService } from './common/logger/winston-logger/winston-logger.service';
+import config from '@config/configuration';
+import {
+  ConfigurationVariables,
+  GraphqlConfig,
+} from '@config/configuration.model';
+import { LoggerModule } from '@features/common/services/logger/logger.module';
+import { TraceLoggerService } from '@features/common/services/logger/trace-logger/trace-logger.service';
+import { LoggerMiddleware } from '@features/common/services/logger/logger-middleware/logger.middleware';
+import { WinstonLoggerService } from '@features/common/services/logger/winston-logger/winston-logger.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     GraphQLModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => {
+      useFactory: async (
+        configService: ConfigService<ConfigurationVariables>
+      ) => {
         const graphqlConfig = configService.get<GraphqlConfig>('graphql');
         return {
           buildSchemaOptions: {
             numberScalarMode: 'integer',
           },
           sortSchema: graphqlConfig.sortSchema,
-          autoSchemaFile:
-            graphqlConfig.schemaDestination || './src/schema.graphql',
+          autoSchemaFile: graphqlConfig.schemaDestination,
           debug: graphqlConfig.debug,
           playground: graphqlConfig.playgroundEnabled,
           context: ({ req }) => ({ req }),
@@ -37,13 +37,9 @@ import { WinstonLoggerService } from './common/logger/winston-logger/winston-log
     }),
     AuthModule,
     UserModule,
-    PostModule,
     LoggerModule,
   ],
-  controllers: [AppController],
   providers: [
-    AppService,
-    AppResolver,
     DateScalar,
     {
       provide: Logger,
