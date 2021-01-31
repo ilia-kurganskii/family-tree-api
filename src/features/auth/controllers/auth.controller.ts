@@ -1,8 +1,10 @@
 import { AuthService } from '@features/auth/services/auth/auth.service';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
-import { UserEntity } from '@features/users/decorators/user.decorator';
+import { JwtAuthGuard } from '@features/auth/guards/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { User } from '@features/auth/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -38,8 +40,10 @@ export class AuthController {
     return this.auth.refreshToken(token);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('/me')
-  async me(@UserEntity() user) {
+  async me(@User() user) {
     return user;
   }
 }
