@@ -1,25 +1,26 @@
 import {
-  Injectable,
-  NotFoundException,
   BadRequestException,
   ConflictException,
+  Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PasswordService } from '../password.service';
-import { PrismaService } from '../../../common/services/prisma.service';
-import { User, PrismaClientKnownRequestError } from '@prisma/client';
+import { PrismaService } from '@features/common/services/prisma.service';
+import { PrismaClientKnownRequestError, User } from '@prisma/client';
 import { Token } from '../../models/token.model';
 import { ConfigService } from '@nestjs/config';
 import {
   ConfigurationVariables,
   SecurityConfig,
 } from '@config/configuration.model';
-import { Role } from '@features/users/models/user.model';
-import { SignupPayload } from '@features/auth/services/auth/dto/signup.payload';
+import { SignupPayload } from '@features/auth/services/auth/dto/input/signup.payload';
+import { IAuthService } from '@features/auth/services/auth/auth.service.interface';
+import { Role } from '@features/users/models/role.model';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
@@ -48,7 +49,7 @@ export class AuthService {
       if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
         throw new ConflictException(`Email ${payload.email} already used.`);
       } else {
-        throw new Error(e);
+        throw e;
       }
     }
   }
@@ -83,7 +84,7 @@ export class AuthService {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  public refreshToken(token: string) {
+  public refreshToken(token: string): Token {
     try {
       const { userId } = this.jwtService.verify(token);
       return this.generateToken({

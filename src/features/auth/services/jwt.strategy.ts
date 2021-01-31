@@ -1,4 +1,4 @@
-import { JwtDto } from '../resolvers/dto/jwt.dto';
+import { JwtDto } from '../resolvers/dto/input/jwt.dto';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
