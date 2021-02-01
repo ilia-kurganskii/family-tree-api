@@ -1,21 +1,29 @@
-import { User } from '@features/users/models/user.model';
 import { ApiProperty } from '@nestjs/swagger';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 import { Role } from '@features/users/models/role.model';
 
-export class UserDto extends User {
+@ObjectType()
+export class UserOutputDto {
+  @Field()
   @ApiProperty({
     example: 'email@gmail.com',
   })
   email: string;
 
+  @Field()
   @ApiProperty()
-  firstname?: string;
+  firstname: string | null;
 
+  @Field()
   @ApiProperty()
-  lastname?: string;
+  lastname: string | null;
 
+  @Field()
   @ApiProperty({
     enum: Role,
   })
   role: Role;
+
+  @HideField()
+  password: string;
 }

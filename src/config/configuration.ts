@@ -2,7 +2,7 @@ import { ConfigurationVariables } from './configuration.model';
 
 const configuration: ConfigurationVariables = {
   nest: {
-    port: parseInt(process.env.PORT, 10) || 3000,
+    port: parseInt(process.env.PORT || '3000', 10),
   },
   cors: {
     enabled: process.env.CORS_ENABLED === 'true',

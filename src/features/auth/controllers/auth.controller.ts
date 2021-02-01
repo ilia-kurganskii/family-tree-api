@@ -4,11 +4,10 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { SignupDto } from './dto/input/signup.dto';
-import { LoginDto } from './dto/input/login.dto';
 import { JwtAuthGuard } from '@features/auth/guards/jwt-auth.guard';
 import {
   ApiBearerAuth,
@@ -16,9 +15,12 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@features/auth/decorators/user.decorator';
-import { UserDto } from '@features/auth/controllers/dto/output/user.dto';
-import { TokenDto } from '@features/auth/controllers/dto/output/token.dto';
+import { ContextUser } from '@features/auth/decorators/user.decorator';
+import { User } from '@features/users/models/user.model';
+import { TokenOutputDto } from '@features/auth/dto/token.output.dto';
+import { SignupInputDto } from '@features/auth/dto/signup.input.dto';
+import { LoginInputDto } from '@features/auth/dto/login.input.dto';
+import { UserOutputDto } from '@features/users/dto/user.output.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -34,9 +36,9 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: 'Returns access and refresh tokens',
-    type: TokenDto,
+    type: TokenOutputDto,
   })
-  async signup(@Body() data: SignupDto) {
+  async signup(@Body() data: SignupInputDto) {
     const { accessToken, refreshToken } = await this.auth.createUser({
       email: data.email.toLowerCase(),
       password: data.password,
@@ -48,17 +50,17 @@ export class AuthController {
   }
 
   @Post('/login')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'Returns access and refresh tokens',
-    type: TokenDto,
+    type: TokenOutputDto,
   })
-  async login(@Body() data: LoginDto) {
-    const { accessToken, refreshToken } = await this.auth.login(
-      data.email.toLowerCase(),
-      data.password
-    );
+  async login(@Body() data: LoginInputDto) {
+    const { accessToken, refreshToken } = await this.auth.login({
+      email: data.email.toLowerCase(),
+      password: data.password,
+    });
 
     return {
       accessToken,
@@ -67,17 +69,16 @@ export class AuthController {
   }
 
   @Post('/refresh')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     description: 'Returns a new access and refresh tokens',
-    type: TokenDto,
+    type: TokenOutputDto,
   })
   async refreshToken(@Body('token') token: string) {
     return this.auth.refreshToken(token);
   }
 
-  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   @ApiOperation({
@@ -85,10 +86,11 @@ export class AuthController {
   })
   @ApiResponse({
     status: 200,
-    type: UserDto,
+    type: UserOutputDto,
     description: 'Returns current user',
   })
-  async me(@User() user) {
+  @ApiBearerAuth()
+  async me(@ContextUser() user: User) {
     return user;
   }
 }

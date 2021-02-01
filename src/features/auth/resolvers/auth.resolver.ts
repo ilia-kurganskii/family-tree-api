@@ -1,6 +1,3 @@
-import { Auth } from '../models/auth.model';
-import { Token } from '../models/token.model';
-import { LoginInput } from './dto/input/login.input';
 import {
   Resolver,
   Mutation,
@@ -9,28 +6,33 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 import { AuthService } from '../services/auth/auth.service';
-import { SignupInput } from './dto/input/signup.input';
+import { SignupInputDto } from '@features/auth/dto/signup.input.dto';
+import { LoginInputDto } from '@features/auth/dto/login.input.dto';
+import { TokenOutputDto } from '@features/auth/dto/token.output.dto';
+import { AuthOutputDto } from '@features/auth/dto/auth.output.dto';
 
-@Resolver(() => Auth)
+@Resolver(() => AuthOutputDto)
 export class AuthResolver {
   constructor(private readonly auth: AuthService) {}
 
-  @Mutation(() => Auth)
-  async signup(@Args('data') data: SignupInput) {
-    data.email = data.email.toLowerCase();
-    const { accessToken, refreshToken } = await this.auth.createUser(data);
+  @Mutation(() => AuthOutputDto)
+  async signup(@Args('data') data: SignupInputDto) {
+    const { accessToken, refreshToken } = await this.auth.createUser({
+      email: data.email.toLowerCase(),
+      password: data.password,
+    });
     return {
       accessToken,
       refreshToken,
     };
   }
 
-  @Mutation(() => Auth)
-  async login(@Args('data') { email, password }: LoginInput) {
-    const { accessToken, refreshToken } = await this.auth.login(
-      email.toLowerCase(),
-      password
-    );
+  @Mutation(() => AuthOutputDto)
+  async login(@Args('data') { email, password }: LoginInputDto) {
+    const { accessToken, refreshToken } = await this.auth.login({
+      email: email.toLowerCase(),
+      password: password,
+    });
 
     return {
       accessToken,
@@ -38,13 +40,13 @@ export class AuthResolver {
     };
   }
 
-  @Mutation(() => Token)
+  @Mutation(() => TokenOutputDto)
   async refreshToken(@Args('token') token: string) {
     return this.auth.refreshToken(token);
   }
 
   @ResolveField('user')
-  async user(@Parent() auth: Auth) {
+  async user(@Parent() auth: AuthOutputDto) {
     return await this.auth.getUserFromToken(auth.accessToken);
   }
 }
