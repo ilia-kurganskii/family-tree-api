@@ -18,7 +18,7 @@ export class AuthResolver {
 
   @Mutation(() => AuthOutputDto)
   async signup(@Args('data') data: SignupInputDto) {
-    const { accessToken, refreshToken } = await this.auth.createUser({
+    const { accessToken, refreshToken } = await this.auth.signup({
       email: data.email.toLowerCase(),
       password: data.password,
     });
@@ -44,7 +44,7 @@ export class AuthResolver {
 
   @Mutation(() => TokenOutputDto)
   async refreshToken(@Args('token') token: string) {
-    return this.auth.refreshToken(token);
+    return this.auth.refreshTokens(token);
   }
 
   @ResolveField('user', () => UserOutputDto)

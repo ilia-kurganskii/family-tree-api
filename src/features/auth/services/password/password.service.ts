@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import {
   ConfigurationVariables,
   SecurityConfig,
-} from 'config/configuration.model';
+} from '@config/configuration.model';
 
 @Injectable()
 export class PasswordService {

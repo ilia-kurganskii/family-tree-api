@@ -3,7 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlUser } from '../../auth/decorators/user-gql.decorator';
 import { User } from '../models/user.model';
 import { ChangePasswordInputDto } from '../dto/change-password.input.dto';
-import { UserService } from '@features/users/services/user.service';
+import { UserService } from '@features/users/services/user/user.service';
 import { UpdateUserInputDto } from '../dto/update-user.input.dto';
 import { JwtGqlAuthGuard } from '@features/auth/guards/jwt-gql-auth.guard';
 import { UserOutputDto } from '@features/users/dto/user.output.dto';

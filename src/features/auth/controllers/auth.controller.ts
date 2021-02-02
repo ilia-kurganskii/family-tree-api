@@ -38,15 +38,11 @@ export class AuthController {
     description: 'Returns access and refresh tokens',
     type: TokenOutputDto,
   })
-  async signup(@Body() data: SignupInputDto) {
-    const { accessToken, refreshToken } = await this.auth.createUser({
+  async signup(@Body() data: SignupInputDto): Promise<TokenOutputDto> {
+    return await this.auth.signup({
       email: data.email.toLowerCase(),
       password: data.password,
     });
-    return {
-      accessToken,
-      refreshToken,
-    };
   }
 
   @Post('/login')
@@ -76,7 +72,7 @@ export class AuthController {
     type: TokenOutputDto,
   })
   async refreshToken(@Body('token') token: string) {
-    return this.auth.refreshToken(token);
+    return this.auth.refreshTokens(token);
   }
 
   @UseGuards(JwtAuthGuard)

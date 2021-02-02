@@ -9,6 +9,7 @@ const config: Config.InitialOptions = {
   },
   moduleNameMapper: {
     '@features/(.*)': '<rootDir>/src/features/$1',
+    '@config/(.*)': '<rootDir>/src/config/$1',
   },
   moduleFileExtensions: ['js', 'json', 'ts'],
   testRegex: '.*\\.spec\\.ts$',

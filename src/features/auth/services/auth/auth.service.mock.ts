@@ -8,7 +8,7 @@ import { Role } from '@features/users/models/role.model';
 import { User } from '@features/users/models/user.model';
 
 export class AuthServiceMock implements IAuthService {
-  createUser(payload: SignupPayload): Promise<Token> {
+  signup(payload: SignupPayload): Promise<Token> {
     return Promise.resolve({
       accessToken: '',
       refreshToken: '',
@@ -36,23 +36,10 @@ export class AuthServiceMock implements IAuthService {
     });
   }
 
-  refreshToken(token: string): Token {
+  refreshTokens(token: string): Token {
     return {
       accessToken: '',
       refreshToken: '',
     };
-  }
-
-  validateUser(userId: string): Promise<User> {
-    return Promise.resolve({
-      id: userId,
-      email: 'mock@gmail.com',
-      firstname: 'Mock',
-      lastname: 'User',
-      role: Role.USER,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      password: 'password',
-    });
   }
 }

@@ -10,3 +10,10 @@ export interface ChangePasswordPayload {
   oldPassword: string;
   newPassword: string;
 }
+
+export interface CreateUserPayload {
+  email: string;
+  password: string;
+  firstname?: string;
+  lastname?: string;
+}

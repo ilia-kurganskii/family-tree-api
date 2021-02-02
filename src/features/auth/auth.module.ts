@@ -1,5 +1,5 @@
-import { PrismaService } from '../common/services/prisma.service';
-import { PasswordService } from './services/password.service';
+import { PrismaService } from '../common/services/prisma/prisma.service';
+import { PasswordService } from './services/password/password.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './services/auth/auth.service';
 import { AuthResolver } from './resolvers/auth.resolver';
@@ -14,6 +14,7 @@ import {
 } from 'config/configuration.model';
 import { AuthController } from '@features/auth/controllers/auth.controller';
 import { DateScalar } from '@features/common/scalars/date.scalar';
+import { UserService } from '@features/users/services/user/user.service';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { DateScalar } from '@features/common/scalars/date.scalar';
     PasswordService,
     PrismaService,
     DateScalar,
+    UserService,
   ],
   exports: [JwtAuthGuard],
 })
