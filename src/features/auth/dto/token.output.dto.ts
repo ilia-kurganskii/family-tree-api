@@ -1,13 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class TokenOutputDto {
-  @Field()
-  @ApiProperty()
+  @Field({ description: 'JWT access token' })
   accessToken: string;
 
-  @Field()
-  @ApiProperty()
+  @Field({ description: 'JWT refresh token' })
   refreshToken: string;
 }

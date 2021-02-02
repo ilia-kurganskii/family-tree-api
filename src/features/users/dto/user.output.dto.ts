@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import { Role } from '@features/users/models/role.model';
 
-@ObjectType()
+@ObjectType('User')
 export class UserOutputDto {
+  @Field(() => ID)
+  id: string;
+
   @Field()
   @ApiProperty({
     example: 'email@gmail.com',
@@ -26,4 +29,12 @@ export class UserOutputDto {
 
   @HideField()
   password: string;
+
+  @Field()
+  @ApiProperty()
+  createdAt: Date;
+
+  @Field()
+  @ApiProperty()
+  updatedAt: Date;
 }

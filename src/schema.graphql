@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Auth {
+type AuthOutputDto {
   """JWT access token"""
   accessToken: String!
 
@@ -11,7 +11,7 @@ type Auth {
   user: User!
 }
 
-input ChangePasswordInput {
+input ChangePasswordInputDto {
   newPassword: String!
   oldPassword: String!
 }
@@ -19,37 +19,29 @@ input ChangePasswordInput {
 """Date custom scalar type"""
 scalar Date
 
-input LoginInput {
+input LoginInputDto {
   email: String!
   password: String!
 }
 
 type Mutation {
-  changePassword(data: ChangePasswordInput!): User!
-  login(data: LoginInput!): Auth!
-  refreshToken(token: String!): Token!
-  signup(data: SignupInput!): Auth!
-  update(data: UpdateUserInput!): User!
+  changePassword(data: ChangePasswordInputDto!): User!
+  login(data: LoginInputDto!): AuthOutputDto!
+  refreshToken(token: String!): TokenOutputDto!
+  signup(data: SignupInputDto!): AuthOutputDto!
+  update(data: UpdateUserInputDto!): User!
 }
 
 type Query {
   me: User!
 }
 
-"""User role"""
-enum Role {
-  ADMIN
-  USER
-}
-
-input SignupInput {
+input SignupInputDto {
   email: String!
-  firstname: String
-  lastname: String
   password: String!
 }
 
-type Token {
+type TokenOutputDto {
   """JWT access token"""
   accessToken: String!
 
@@ -57,20 +49,17 @@ type Token {
   refreshToken: String!
 }
 
-input UpdateUserInput {
+input UpdateUserInputDto {
   firstname: String
   lastname: String
 }
 
 type User {
-  """Identifies the date and time when the object was created."""
   createdAt: Date!
   email: String!
-  firstname: String
+  firstname: String!
   id: ID!
-  lastname: String
-  role: Role!
-
-  """Identifies the date and time when the object was last updated."""
+  lastname: String!
+  role: String!
   updatedAt: Date!
 }

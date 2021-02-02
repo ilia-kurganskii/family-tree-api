@@ -12,7 +12,4 @@ export class ChangePasswordInputDto {
   @IsNotEmpty()
   @MinLength(8)
   newPassword: string;
-
-  @Field()
-  od: string;
 }

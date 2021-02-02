@@ -13,6 +13,7 @@ import {
   SecurityConfig,
 } from 'config/configuration.model';
 import { AuthController } from '@features/auth/controllers/auth.controller';
+import { DateScalar } from '@features/common/scalars/date.scalar';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { AuthController } from '@features/auth/controllers/auth.controller';
     JwtAuthGuard,
     PasswordService,
     PrismaService,
+    DateScalar,
   ],
   exports: [JwtAuthGuard],
 })

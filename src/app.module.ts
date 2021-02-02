@@ -2,7 +2,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserModule } from '@features/users/user.module';
-import { DateScalar } from '@features/common/scalars/date.scalar';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from '@config/configuration';
 import {
@@ -40,7 +39,6 @@ import { WinstonLoggerService } from '@features/common/services/logger/winston-l
     LoggerModule,
   ],
   providers: [
-    DateScalar,
     {
       provide: Logger,
       useClass: WinstonLoggerService,
