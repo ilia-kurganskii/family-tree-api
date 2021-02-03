@@ -7,6 +7,10 @@ import { AuthService } from '@features/auth/services/auth/auth.service';
 import { UserServiceMock } from '@features/users/services/user/user.service.mock';
 import { JwtService } from '@features/auth/services/jwt/jwt.service';
 import { JwtServiceMock } from '@features/auth/services/jwt/jwt.service.mock';
+import {
+  IncorrectPassword,
+  IncorrectUsername,
+} from '@features/auth/services/auth/auth.exceptions';
 
 describe('AuthService', () => {
   let userService: UserService;
@@ -55,6 +59,49 @@ describe('AuthService', () => {
       expect(jwtService.generateTokens).toHaveBeenCalledWith({
         userId: 'newId',
       });
+    });
+  });
+
+  describe('login', () => {
+    it('should generate token for existed user id', async () => {
+      jest.spyOn(userService, 'findUserByEmail').mockResolvedValue({
+        ...userMock,
+        id: 'existedId',
+      });
+      jest.spyOn(passwordService, 'validatePassword').mockResolvedValue(true);
+      jest.spyOn(jwtService, 'generateTokens');
+
+      await authService.login({
+        email: 'email',
+        password: 'password',
+      });
+
+      expect(jwtService.generateTokens).toHaveBeenCalledWith({
+        userId: 'existedId',
+      });
+    });
+
+    it('should throw error when user not found', async () => {
+      jest.spyOn(userService, 'findUserByEmail').mockResolvedValue(undefined);
+
+      await expect(
+        authService.login({
+          email: 'email',
+          password: 'password',
+        })
+      ).rejects.toThrowError(IncorrectUsername);
+    });
+
+    it('should throw error when password is found', async () => {
+      jest.spyOn(userService, 'findUserByEmail').mockResolvedValue(userMock);
+      jest.spyOn(passwordService, 'validatePassword').mockResolvedValue(false);
+
+      await expect(
+        authService.login({
+          email: 'email',
+          password: 'password',
+        })
+      ).rejects.toThrowError(IncorrectPassword);
     });
   });
 });
