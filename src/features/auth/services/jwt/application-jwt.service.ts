@@ -10,21 +10,21 @@ import { Injectable } from '@nestjs/common';
 import { JwtRefreshModel } from '@features/auth/models/jwt-refresh.model';
 
 @Injectable()
-export class JwtService {
+export class ApplicationJwtService {
   constructor(
     private readonly nestJwt: NestJwtService,
     private readonly configService: ConfigService<ConfigurationVariables>
   ) {}
 
-  decodeAccessToken(accessToken: string): JwtAccessPayload {
+  public decodeAccessToken(accessToken: string): JwtAccessPayload {
     return this.nestJwt.decode(accessToken) as JwtAccessPayload;
   }
 
-  verifyRefreshToken(refreshToken: string): JwtRefreshModel {
+  public verifyRefreshToken(refreshToken: string): JwtRefreshModel {
     return this.nestJwt.verify<JwtRefreshModel>(refreshToken);
   }
 
-  generateTokens(payload: JwtAccessPayload): Token {
+  public generateTokens(payload: JwtAccessPayload): Token {
     const securityConfig = this.configService.get<SecurityConfig>('security');
 
     const accessToken = this.nestJwt.sign(payload, {

@@ -7,7 +7,7 @@ import {
 } from '@features/auth/services/auth/auth.types';
 import { Token } from '@features/auth/models/token.model';
 import { User } from '@features/users/models/user.model';
-import { JwtService } from '@features/auth/services/jwt/jwt.service';
+import { ApplicationJwtService } from '@features/auth/services/jwt/application-jwt.service';
 import { UserService } from '@features/users/services/user/user.service';
 import {
   IncorrectPassword,
@@ -18,7 +18,7 @@ import {
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
-    private readonly jwtService: JwtService,
+    private readonly jwtService: ApplicationJwtService,
     private readonly passwordService: PasswordService,
     private readonly userService: UserService
   ) {}

@@ -5,7 +5,7 @@ import { PasswordServiceMock } from '@features/auth/services/password/password.s
 import { userMock } from '@features/users/models/user.model.mock';
 import { AuthService } from '@features/auth/services/auth/auth.service';
 import { UserServiceMock } from '@features/users/services/user/user.service.mock';
-import { JwtService } from '@features/auth/services/jwt/jwt.service';
+import { ApplicationJwtService } from '@features/auth/services/jwt/application-jwt.service';
 import { JwtServiceMock } from '@features/auth/services/jwt/jwt.service.mock';
 import {
   IncorrectPassword,
@@ -15,7 +15,7 @@ import {
 describe('AuthService', () => {
   let userService: UserService;
   let authService: AuthService;
-  let jwtService: JwtService;
+  let jwtService: ApplicationJwtService;
   let passwordService: PasswordService;
 
   beforeEach(async () => {
@@ -27,7 +27,7 @@ describe('AuthService', () => {
           useClass: UserServiceMock,
         },
         {
-          provide: JwtService,
+          provide: ApplicationJwtService,
           useClass: JwtServiceMock,
         },
         {
@@ -39,7 +39,7 @@ describe('AuthService', () => {
 
     authService = moduleRef.get(AuthService);
     userService = moduleRef.get(UserService);
-    jwtService = moduleRef.get(JwtService);
+    jwtService = moduleRef.get(ApplicationJwtService);
     passwordService = moduleRef.get(PasswordService);
   });
 

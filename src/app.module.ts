@@ -12,6 +12,8 @@ import { LoggerModule } from '@features/common/services/logger/logger.module';
 import { TraceLoggerService } from '@features/common/services/logger/trace-logger/trace-logger.service';
 import { LoggerMiddleware } from '@features/common/services/logger/logger-middleware/logger.middleware';
 import { WinstonLoggerService } from '@features/common/services/logger/winston-logger/winston-logger.service';
+import { APP_FILTER } from '@nestjs/core';
+import { ApplicationExceptionFilter } from '@features/common/filters/application-exception.filter';
 
 @Module({
   imports: [
@@ -42,6 +44,10 @@ import { WinstonLoggerService } from '@features/common/services/logger/winston-l
     {
       provide: Logger,
       useClass: WinstonLoggerService,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ApplicationExceptionFilter,
     },
     TraceLoggerService,
   ],
