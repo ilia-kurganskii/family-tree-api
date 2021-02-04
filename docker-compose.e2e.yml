@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+    env_file:
+      - .e2e.env
+
+  postgres:
+    image: postgres:13
+    env_file:
+      - .e2e.env
+

@@ -16,14 +16,16 @@ RUN npm run build
 
 
 FROM node:12.20.0-alpine
+RUN mkdir -p /app/node_modules
+RUN chown -R node:node /app
+USER node
 WORKDIR /app
 
-COPY package*.json ./
-
+COPY --chown=node:node package*.json ./
 RUN npm install --production
 
-COPY --from=builder /app/dist ./
-COPY --from=builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
+COPY  --chown=node:node --from=builder /app/dist ./
+COPY  --chown=node:node --from=builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
 
 ENV NODE_ENV production
 EXPOSE 80

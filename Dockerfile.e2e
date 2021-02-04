@@ -1,0 +1,19 @@
+FROM node:12.20.0
+
+# Create app directory
+WORKDIR /app
+
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+COPY package*.json ./
+
+# Install app dependencies
+RUN npm install
+
+COPY prisma ./prisma/
+
+# Required if not done in postinstall
+RUN npx prisma generate
+
+COPY . .
+ENTRYPOINT ["/app/run-migration.sh"]
+CMD [ "npm", "run", "test:e2e" ]
