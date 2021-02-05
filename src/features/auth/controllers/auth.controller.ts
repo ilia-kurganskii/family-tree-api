@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Logger,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -25,6 +26,8 @@ import { UserOutputDto } from '@features/users/dto/user.output.dto';
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(private readonly auth: AuthService) {}
 
   @Post('/signup')
@@ -39,6 +42,7 @@ export class AuthController {
     type: TokenOutputDto,
   })
   async signup(@Body() data: SignupInputDto): Promise<TokenOutputDto> {
+    this.logger.log('signup');
     return await this.auth.signup({
       email: data.email.toLowerCase(),
       password: data.password,

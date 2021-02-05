@@ -16,6 +16,7 @@ import { AuthController } from '@features/auth/controllers/auth.controller';
 import { DateScalar } from '@features/common/scalars/date.scalar';
 import { UserService } from '@features/users/services/user/user.service';
 import { ApplicationJwtService } from '@features/auth/services/jwt/application-jwt.service';
+import { LoggerModule } from '@features/common/services/logger/logger.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ApplicationJwtService } from '@features/auth/services/jwt/application-j
       },
       inject: [ConfigService],
     }),
+    LoggerModule,
   ],
   controllers: [AuthController],
   providers: [

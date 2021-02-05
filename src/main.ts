@@ -9,12 +9,11 @@ import {
   NestConfig,
   SwaggerConfig,
 } from '@config/configuration.model';
+import { WinstonLoggerService } from '@features/common/services/logger/winston-logger/winston-logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: false,
-  });
-  app.useLogger(app.get(Logger));
+  const app = await NestFactory.create(AppModule);
+  app.useLogger(app.get(WinstonLoggerService));
 
   // Validation
   app.useGlobalPipes(new ValidationPipe());

@@ -1,6 +1,6 @@
 {
   "name": "family-tree-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Family Tree API service",
   "author": "Ilya Kurganskii",
   "license": "MIT",
@@ -64,6 +64,7 @@
     "bcrypt": "5.0.0",
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
+    "cls-hooked": "^4.2.2",
     "graphql": "15.4.0",
     "graphql-tools": "7.0.2",
     "passport": "0.4.1",
@@ -81,6 +82,7 @@
     "@prisma/cli": "2.13.0",
     "@types/bcrypt": "3.0.0",
     "@types/chance": "1.1.0",
+    "@types/cls-hooked": "^4.3.3",
     "@types/express": "4.17.8",
     "@types/jest": "26.0.19",
     "@types/node": "13.13.5",

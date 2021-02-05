@@ -9,9 +9,8 @@ import {
   GraphqlConfig,
 } from '@config/configuration.model';
 import { LoggerModule } from '@features/common/services/logger/logger.module';
-import { TraceLoggerService } from '@features/common/services/logger/trace-logger/trace-logger.service';
-import { LoggerMiddleware } from '@features/common/services/logger/logger-middleware/logger.middleware';
 import { WinstonLoggerService } from '@features/common/services/logger/winston-logger/winston-logger.service';
+import { LoggerMiddleware } from '@features/common/services/logger/logger-middleware/logger.middleware';
 import { APP_FILTER } from '@nestjs/core';
 import { ApplicationExceptionFilter } from '@features/common/filters/application-exception.filter';
 
@@ -41,16 +40,13 @@ import { ApplicationExceptionFilter } from '@features/common/filters/application
     LoggerModule,
   ],
   providers: [
-    {
-      provide: Logger,
-      useClass: WinstonLoggerService,
-    },
+    WinstonLoggerService,
     {
       provide: APP_FILTER,
       useClass: ApplicationExceptionFilter,
     },
-    TraceLoggerService,
   ],
+  exports: [WinstonLoggerService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

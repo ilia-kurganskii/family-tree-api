@@ -7,6 +7,13 @@ const configuration: ConfigurationVariables = {
   cors: {
     enabled: process.env.CORS_ENABLED === 'true',
   },
+  logger: {
+    database: {
+      info: process.env.LOGGER_DATABASE_INFO_ENABLED === 'true',
+      query: process.env.LOGGER_DATABASE_QUERY_ENABLED === 'true',
+      warn: process.env.LOGGER_DATABASE_WARN_ENABLED === 'true',
+    },
+  },
   swagger: {
     enabled: process.env.SWAGGER_ENABLED === 'true',
     title: process.env.SWAGGER_TITLE || 'Family Tree Documentation',
