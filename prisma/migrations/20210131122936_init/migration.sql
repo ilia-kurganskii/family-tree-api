@@ -1,5 +1,6 @@
+BEGIN;
 -- CreateEnum
-CREATE TYPE "blog"."Role" AS ENUM ('ADMIN', 'USER');
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'USER');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -17,3 +18,5 @@ CREATE TABLE "User" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
+
+COMMIT;

@@ -30,4 +30,4 @@ COPY  --chown=node:node --from=builder /app/node_modules/.prisma/client ./node_m
 ENV NODE_ENV production
 EXPOSE 80
 
-CMD [ "node", "./main.js" ]
+CMD [ "node", "./src/main.js" ]
