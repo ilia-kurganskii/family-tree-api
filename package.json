@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@devoxa/prisma-relay-cursor-connection": "1.1.0",
-    "@nestjs/common": "7.6.1",
+    "@nestjs/common": "7.6.11",
     "@nestjs/config": "0.6.1",
     "@nestjs/core": "7.6.1",
     "@nestjs/graphql": "7.9.1",
@@ -64,7 +64,7 @@
     "bcrypt": "5.0.0",
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
-    "cls-hooked": "^4.2.2",
+    "cls-hooked": "4.2.2",
     "graphql": "15.4.0",
     "graphql-tools": "7.0.2",
     "passport": "0.4.1",
@@ -72,8 +72,8 @@
     "reflect-metadata": "0.1.13",
     "rxjs": "6.6.3",
     "swagger-ui-express": "4.1.5",
-    "uuid": "^8.3.2",
-    "winston": "^3.3.3"
+    "uuid": "8.3.2",
+    "winston": "3.3.3"
   },
   "devDependencies": {
     "@apollo/gateway": "0.21.4",
@@ -82,7 +82,7 @@
     "@prisma/cli": "2.13.0",
     "@types/bcrypt": "3.0.0",
     "@types/chance": "1.1.0",
-    "@types/cls-hooked": "^4.3.3",
+    "@types/cls-hooked": "4.3.3",
     "@types/express": "4.17.8",
     "@types/jest": "26.0.19",
     "@types/node": "13.13.5",
