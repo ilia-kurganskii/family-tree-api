@@ -1,6 +1,9 @@
 import { PrismaService } from '@features/common/services/prisma/prisma.service';
 import { Tree } from '@features/family-tree/models/Tree';
-import { CreateTreePayload } from '@features/family-tree/services/tree/tree.service.types';
+import {
+  CreateTreePayload,
+  GetTreesByCreatorIdPayload,
+} from '@features/family-tree/services/tree/tree.service.types';
 
 import { Injectable } from '@nestjs/common';
 
@@ -17,6 +20,16 @@ export class TreeService {
             id: payload.creatorId,
           },
         },
+      },
+    });
+  }
+
+  async getTreesByCreatorId(
+    payload: GetTreesByCreatorIdPayload
+  ): Promise<Tree[]> {
+    return this.prisma.tree.findMany({
+      where: {
+        creatorId: payload.creatorId,
       },
     });
   }

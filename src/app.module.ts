@@ -1,3 +1,4 @@
+import { FamilyTreeModule } from '@features/family-tree/family-tree.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthModule } from '@features/auth/auth.module';
@@ -38,6 +39,7 @@ import { ApplicationExceptionFilter } from '@features/common/filters/application
     AuthModule,
     UserModule,
     LoggerModule,
+    FamilyTreeModule,
   ],
   providers: [
     WinstonLoggerService,
