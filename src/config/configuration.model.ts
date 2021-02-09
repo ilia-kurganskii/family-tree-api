@@ -1,5 +1,6 @@
 export interface ConfigurationVariables {
   nest: NestConfig;
+  logger: LoggerConfig;
   cors: CorsConfig;
   swagger: SwaggerConfig;
   graphql: GraphqlConfig;
@@ -8,6 +9,14 @@ export interface ConfigurationVariables {
 
 export interface NestConfig {
   port: number;
+}
+
+export interface LoggerConfig {
+  database: {
+    query: boolean;
+    info: boolean;
+    warn: boolean;
+  };
 }
 
 export interface CorsConfig {

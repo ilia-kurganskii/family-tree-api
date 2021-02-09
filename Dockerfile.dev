@@ -15,4 +15,5 @@ COPY prisma ./prisma/
 RUN npx prisma generate
 
 EXPOSE 3000
+ENTRYPOINT ["/app/run-migration.sh"]
 CMD [ "npm", "run", "start:dev" ]

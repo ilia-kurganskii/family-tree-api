@@ -1,15 +1,23 @@
 import { Logger } from 'winston';
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
-import { WINSTON_LOGGER } from '../logger.const';
+import { CLS_NAMESPACE, WINSTON_LOGGER } from '../logger.const';
+import { Namespace } from 'cls-hooked';
 
 @Injectable()
 export class WinstonLoggerService implements LoggerService {
   private context?: string;
 
-  constructor(@Inject(WINSTON_LOGGER) private logger: Logger) {}
+  constructor(
+    @Inject(WINSTON_LOGGER) private logger: Logger,
+    @Inject(CLS_NAMESPACE) private clsNamespace: Namespace
+  ) {}
 
   public setContext(context: string) {
     this.context = context;
+  }
+
+  private getTraceID() {
+    return this.clsNamespace.get('traceID');
   }
 
   public log(message: any, context?: string): any {
@@ -20,12 +28,14 @@ export class WinstonLoggerService implements LoggerService {
 
       return this.logger.info(msg as string, {
         context,
+        traceId: this.getTraceID(),
         ...meta,
       });
     }
 
     return this.logger.info(message, {
       context,
+      traceId: this.getTraceID(),
     });
   }
 
@@ -38,6 +48,7 @@ export class WinstonLoggerService implements LoggerService {
 
       return this.logger.error(msg, {
         context,
+        traceId: this.getTraceID(),
         stack: [trace || message.stack],
         ...meta,
       });
@@ -48,12 +59,17 @@ export class WinstonLoggerService implements LoggerService {
 
       return this.logger.error(msg as string, {
         context,
+        traceId: this.getTraceID(),
         stack: [trace],
         ...meta,
       });
     }
 
-    return this.logger.error(message, { context, stack: [trace] });
+    return this.logger.error(message, {
+      context,
+      traceId: this.getTraceID(),
+      stack: [trace],
+    });
   }
 
   public warn(message: any, context?: string): any {
@@ -64,12 +80,15 @@ export class WinstonLoggerService implements LoggerService {
 
       return this.logger.warn(msg as string, {
         context,
+        traceId: this.getTraceID(),
+
         ...meta,
       });
     }
 
     return this.logger.warn(message, {
       context,
+      traceId: this.getTraceID(),
     });
   }
 
@@ -81,12 +100,14 @@ export class WinstonLoggerService implements LoggerService {
 
       return this.logger.debug(msg as string, {
         context,
+        traceId: this.getTraceID(),
         ...meta,
       });
     }
 
     return this.logger.debug(message, {
       context,
+      traceId: this.getTraceID(),
     });
   }
 
@@ -98,12 +119,14 @@ export class WinstonLoggerService implements LoggerService {
 
       return this.logger.verbose(msg as string, {
         context,
+        traceId: this.getTraceID(),
         ...meta,
       });
     }
 
     return this.logger.verbose(message, {
       context,
+      traceId: this.getTraceID(),
     });
   }
 }
