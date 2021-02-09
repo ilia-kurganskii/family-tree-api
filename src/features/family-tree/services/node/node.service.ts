@@ -11,11 +11,16 @@ import { Node } from '@features/family-tree/models/Node';
 export class NodeService {
   constructor(private readonly prisma: PrismaService) {}
 
-  createNode(payload: CreateNodePayload): Promise<Node> {
+  async createNode(payload: CreateNodePayload): Promise<Node> {
     return this.prisma.node.create({
       data: {
         firstname: payload.firstname,
         lastname: payload.lastname,
+        tree: {
+          connect: {
+            id: payload.treeId,
+          },
+        },
       },
     });
   }

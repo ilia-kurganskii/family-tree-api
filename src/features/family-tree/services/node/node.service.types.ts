@@ -1,5 +1,3 @@
-import { Node } from '@features/family-tree/models/Node';
-
 export interface AddChildPayload {
   parentId: string;
   childId: string;
@@ -11,6 +9,7 @@ export interface RemoveChildPayload {
 }
 
 export interface CreateNodePayload {
+  treeId: string;
   firstname: string;
   lastname?: string;
 }
