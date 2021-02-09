@@ -23,6 +23,16 @@ model User {
   role      Role
 }
 
+model Node {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstname String
+  lastname  String?
+  description String?
+  parents Node[] @relation(name: "NodeRelation", references: [id])
+  children Node[] @relation(name: "NodeRelation", references: [id])
+}
 
 enum Role {
   ADMIN
