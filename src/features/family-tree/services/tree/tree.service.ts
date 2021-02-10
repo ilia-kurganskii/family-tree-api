@@ -52,9 +52,9 @@ export class TreeService {
   async getTreeByNodeId(payload: GetTreeByNodeIdPayload): Promise<Tree> {
     this.logger.log('getTreeByNodeId');
     return this.prisma.tree.findFirst({
-      include: {
+      where: {
         nodes: {
-          where: {
+          some: {
             id: payload.nodeId,
           },
         },
