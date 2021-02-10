@@ -50,6 +50,7 @@
     "docker:debug:stop": "docker-compose  -f docker-compose.dev.yml down "
   },
   "dependencies": {
+    "@casl/ability": "^5.2.2",
     "@devoxa/prisma-relay-cursor-connection": "1.1.0",
     "@nestjs/common": "7.6.11",
     "@nestjs/config": "0.6.1",

@@ -1,6 +1,7 @@
+import { CommonModule } from '@features/common/common.module';
 import { FamilyTreeModule } from '@features/family-tree/family-tree.module';
 import { GraphQLModule } from '@nestjs/graphql';
-import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthModule } from '@features/auth/auth.module';
 import { UserModule } from '@features/users/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -9,8 +10,6 @@ import {
   ConfigurationVariables,
   GraphqlConfig,
 } from '@config/configuration.model';
-import { LoggerModule } from '@features/common/services/logger/logger.module';
-import { WinstonLoggerService } from '@features/common/services/logger/winston-logger/winston-logger.service';
 import { LoggerMiddleware } from '@features/common/services/logger/logger-middleware/logger.middleware';
 import { APP_FILTER } from '@nestjs/core';
 import { ApplicationExceptionFilter } from '@features/common/filters/application-exception.filter';
@@ -38,17 +37,16 @@ import { ApplicationExceptionFilter } from '@features/common/filters/application
     }),
     AuthModule,
     UserModule,
-    LoggerModule,
+    CommonModule,
     FamilyTreeModule,
   ],
   providers: [
-    WinstonLoggerService,
     {
       provide: APP_FILTER,
       useClass: ApplicationExceptionFilter,
     },
   ],
-  exports: [WinstonLoggerService],
+  exports: [],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

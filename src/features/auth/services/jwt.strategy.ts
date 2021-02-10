@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth/auth.service';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -13,6 +13,8 @@ import { UserService } from '@features/users/services/user/user.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+  private logger = new Logger(JwtStrategy.name);
+
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
@@ -25,10 +27,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtInputDto): Promise<User> {
+    this.logger.log('validate jwt payload');
     const user = await this.userService.findUserById(payload.userId);
     if (!user) {
       throw new UnauthorizedException();
     }
+    this.logger.log('logged as user with id: ' + user.id);
     return user;
   }
 }

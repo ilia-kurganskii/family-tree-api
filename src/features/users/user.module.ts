@@ -1,10 +1,11 @@
+import { CommonModule } from '@features/common/common.module';
 import { ProfileResolver } from './resolvers/profile.resolver';
 import { Module } from '@nestjs/common';
-import { PrismaService } from '../common/services/prisma/prisma.service';
 import { UserService } from './services/user/user.service';
 import { PasswordService } from '../auth/services/password/password.service';
 
 @Module({
-  providers: [ProfileResolver, UserService, PasswordService, PrismaService],
+  imports: [CommonModule],
+  providers: [ProfileResolver, UserService, PasswordService],
 })
 export class UserModule {}

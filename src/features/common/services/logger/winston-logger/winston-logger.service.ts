@@ -1,7 +1,7 @@
-import { Logger } from 'winston';
 import { Inject, Injectable, LoggerService } from '@nestjs/common';
-import { CLS_NAMESPACE, WINSTON_LOGGER } from '../logger.const';
 import { Namespace } from 'cls-hooked';
+import { Logger } from 'winston';
+import { CLS_NAMESPACE, WINSTON_LOGGER } from '../logger.const';
 
 @Injectable()
 export class WinstonLoggerService implements LoggerService {
@@ -81,7 +81,6 @@ export class WinstonLoggerService implements LoggerService {
       return this.logger.warn(msg as string, {
         context,
         traceId: this.getTraceID(),
-
         ...meta,
       });
     }

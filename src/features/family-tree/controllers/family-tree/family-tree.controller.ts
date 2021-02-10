@@ -1,5 +1,7 @@
 import { ContextUser } from '@features/auth/decorators/user.decorator';
 import { JwtAuthGuard } from '@features/auth/guards/jwt-auth.guard';
+import { CheckAccess } from '@features/common/decorators/check-action.guard';
+import { AccessAction } from '@features/common/models/access-action';
 import { AddChildInputDto } from '@features/family-tree/dto/add-child.input.dto';
 import { CreateNodeInputDto } from '@features/family-tree/dto/create-node.input.dto';
 import { CreateTreeInputDto } from '@features/family-tree/dto/create-tree.input.dto';
@@ -7,6 +9,8 @@ import { NodeOutputDto } from '@features/family-tree/dto/node.output.dto';
 import { NodesOutputDto } from '@features/family-tree/dto/nodes.output.dto';
 import { TreeOutputDto } from '@features/family-tree/dto/tree.output.dto';
 import { TreesOutputDto } from '@features/family-tree/dto/trees.output.dto';
+import { NodeAccessGuard } from '@features/family-tree/guards/node-access.guard';
+import { TreeAccessGuard } from '@features/family-tree/guards/tree-access.guard';
 import { NodeService } from '@features/family-tree/services/node/node.service';
 import { TreeService } from '@features/family-tree/services/tree/tree.service';
 import { User } from '@features/users/models/user.model';
@@ -32,9 +36,8 @@ import {
 @UseGuards(JwtAuthGuard)
 @Controller('family-tree')
 @ApiTags('family tree')
+@ApiBearerAuth()
 export class FamilyTreeController {
-  private readonly logger = new Logger(FamilyTreeController.name);
-
   constructor(
     private readonly treeService: TreeService,
     private readonly nodeService: NodeService
@@ -49,8 +52,7 @@ export class FamilyTreeController {
     type: TreesOutputDto,
     description: 'Returns array of trees',
   })
-  @ApiBearerAuth()
-  async getTrees(@ContextUser() user: User): Promise<TreesOutputDto> {
+  async readTrees(@ContextUser() user: User): Promise<TreesOutputDto> {
     const trees = await this.treeService.getTreesByCreatorId({
       creatorId: user.id,
     });
@@ -69,7 +71,6 @@ export class FamilyTreeController {
     type: TreeOutputDto,
     description: 'Returns a new tree',
   })
-  @ApiBearerAuth()
   async createTree(
     @ContextUser() user: User,
     @Body() data: CreateTreeInputDto
@@ -80,6 +81,8 @@ export class FamilyTreeController {
     });
   }
 
+  @UseGuards(TreeAccessGuard)
+  @CheckAccess(AccessAction.Update)
   @Post('/trees/:id/node')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
@@ -91,11 +94,10 @@ export class FamilyTreeController {
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
-    type: TreeOutputDto,
+    type: NodeOutputDto,
     description: 'Returns a new node',
   })
-  @ApiBearerAuth()
-  async createNode(
+  async createNodeInTree(
     @Param('id') treeId,
     @Body() data: CreateNodeInputDto
   ): Promise<NodeOutputDto> {
@@ -105,6 +107,8 @@ export class FamilyTreeController {
     });
   }
 
+  @UseGuards(TreeAccessGuard)
+  @CheckAccess(AccessAction.Read)
   @Get('/trees/:id/nodes')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -119,8 +123,7 @@ export class FamilyTreeController {
     type: NodesOutputDto,
     description: 'Returns a nodes',
   })
-  @ApiBearerAuth()
-  async getNodes(@Param('id') treeId): Promise<NodesOutputDto> {
+  async readNodes(@Param('id') treeId): Promise<NodesOutputDto> {
     const nodes = await this.nodeService.getNodesByTreeId({
       treeId,
     });
@@ -130,6 +133,8 @@ export class FamilyTreeController {
   }
 
   @Post('/nodes/:id/children')
+  @UseGuards(NodeAccessGuard)
+  @CheckAccess(AccessAction.Update)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Add child to node with :id',
@@ -143,8 +148,7 @@ export class FamilyTreeController {
     type: NodeOutputDto,
     description: 'Returns a parent node with new child',
   })
-  @ApiBearerAuth()
-  async addChild(
+  async addChildToNode(
     @Param('id') nodeId,
     @Body() data: AddChildInputDto
   ): Promise<NodeOutputDto> {
