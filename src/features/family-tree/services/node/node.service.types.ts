@@ -13,6 +13,7 @@ export interface CreateNodePayload {
   treeId: string;
   firstname: string;
   lastname?: string;
+  description?: string;
 }
 
 export interface GetNodesByTreeIdPayload {

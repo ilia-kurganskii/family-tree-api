@@ -1,10 +1,8 @@
-import { Test } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
+import { Token } from '@features/auth/models/token.model';
 import { AuthService } from '@features/auth/services/auth/auth.service';
 import { AuthServiceMock } from '@features/auth/services/auth/auth.service.mock';
-import { Token } from '@features/auth/models/token.model';
-import { User } from '@features/users/models/user.model';
-import { userMock } from '@features/users/models/user.model.mock';
+import { Test } from '@nestjs/testing';
+import { AuthController } from './auth.controller';
 
 describe('AuthController', () => {
   let authController: AuthController;

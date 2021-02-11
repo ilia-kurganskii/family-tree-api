@@ -20,7 +20,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Logger,
   Param,
   Post,
   UseGuards,
@@ -98,7 +97,7 @@ export class FamilyTreeController {
     description: 'Returns a new node',
   })
   async createNodeInTree(
-    @Param('id') treeId,
+    @Param('id') treeId: string,
     @Body() data: CreateNodeInputDto
   ): Promise<NodeOutputDto> {
     return this.nodeService.createNode({
@@ -123,7 +122,7 @@ export class FamilyTreeController {
     type: NodesOutputDto,
     description: 'Returns a nodes',
   })
-  async readNodes(@Param('id') treeId): Promise<NodesOutputDto> {
+  async readNodes(@Param('id') treeId: string): Promise<NodesOutputDto> {
     const nodes = await this.nodeService.getNodesByTreeId({
       treeId,
     });
@@ -149,7 +148,7 @@ export class FamilyTreeController {
     description: 'Returns a parent node with new child',
   })
   async addChildToNode(
-    @Param('id') nodeId,
+    @Param('id') nodeId: string,
     @Body() data: AddChildInputDto
   ): Promise<NodeOutputDto> {
     return this.nodeService.addChild({

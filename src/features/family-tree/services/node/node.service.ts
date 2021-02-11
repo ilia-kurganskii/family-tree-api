@@ -31,6 +31,7 @@ export class NodeService {
         data: {
           firstname: payload.firstname,
           lastname: payload.lastname,
+          description: payload.description,
           tree: {
             connect: {
               id: payload.treeId,
