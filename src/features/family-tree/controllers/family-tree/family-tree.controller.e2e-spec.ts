@@ -1,10 +1,12 @@
 import { JwtAuthGuard } from '@features/auth/guards/jwt-auth.guard';
 import { AllowAllGuard } from '@features/auth/guards/jwt-auth.guard.mock';
 import { PrismaService } from '@features/common/services/prisma/prisma.service';
+import { AddChildInputDto } from '@features/family-tree/dto/add-child.input.dto';
 import { CreateNodeInputDto } from '@features/family-tree/dto/create-node.input.dto';
 import { CreateTreeInputDto } from '@features/family-tree/dto/create-tree.input.dto';
 import { blueUser, redUser } from '@features/users/models/user.model.mock';
 import { INestApplication } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../../../../app.module';
@@ -21,6 +23,20 @@ describe('Family Tree', () => {
           create: {
             id: 'blue-user-tree-id',
             name: 'Blue User Tree',
+            nodes: {
+              create: [
+                {
+                  id: 'blue-user-node-1',
+                  firstname: 'First',
+                  lastname: 'Node',
+                },
+                {
+                  id: 'blue-user-node-2',
+                  firstname: 'Second',
+                  lastname: 'Node',
+                },
+              ],
+            },
           },
         },
       },
@@ -33,6 +49,20 @@ describe('Family Tree', () => {
           create: {
             id: 'red-user-tree-id',
             name: 'Red User Tree',
+            nodes: {
+              create: [
+                {
+                  id: 'red-user-node-1',
+                  firstname: 'First',
+                  lastname: 'Node',
+                },
+                {
+                  id: 'red-user-node-2',
+                  firstname: 'Second',
+                  lastname: 'Node',
+                },
+              ],
+            },
           },
         },
       },
@@ -102,6 +132,36 @@ describe('Family Tree', () => {
       .expect(201);
   });
 
+  describe('/GET /family-tree/trees/:id/nodes', () => {
+    it(`/GET /family-tree/trees/red-user-tree-id/nodes should return 200`, async () => {
+      return request(app.getHttpServer())
+        .get('/family-tree/trees/blue-user-tree-id/nodes')
+        .expect(({ body }) => {
+          expect(body).toMatchObject({
+            nodes: [
+              {
+                id: 'blue-user-node-1',
+                firstname: 'First',
+                lastname: 'Node',
+              },
+              {
+                id: 'blue-user-node-2',
+                firstname: 'Second',
+                lastname: 'Node',
+              },
+            ],
+          });
+        })
+        .expect(200);
+    });
+
+    it(`/GET /family-tree/trees/red-user-tree-id/nodes should return 403`, async () => {
+      return request(app.getHttpServer())
+        .get('/family-tree/trees/red-user-tree-id/nodes')
+        .expect(403);
+    });
+  });
+
   describe('/POST /family-tree/trees/:id/node', () => {
     it(`/POST /family-tree/trees/blue-user-tree-id/node should create a node`, async () => {
       const body: CreateNodeInputDto = {
@@ -136,10 +196,31 @@ describe('Family Tree', () => {
     });
   });
 
-  describe('/GET /family-tree/trees/:id/nodes', () => {
-    it(`/GET /family-tree/trees/red-user-tree-id/nodes should return 403`, async () => {
+  describe('/POST /family-tree/nodes/:id/children', () => {
+    it(`/POST /family-tree/nodes/blue-user-node-1/children should return 200`, async () => {
+      const requestBody: AddChildInputDto = {
+        childId: 'blue-user-node-2',
+      };
       return request(app.getHttpServer())
-        .get('/family-tree/trees/red-user-tree-id/nodes')
+        .post('/family-tree/nodes/blue-user-node-1/children')
+        .send(requestBody)
+        .expect(({ body }) => {
+          expect(body).toMatchObject({
+            firstname: 'First',
+            lastname: 'Node',
+            childrenIds: ['blue-user-node-2'],
+          });
+        })
+        .expect(200);
+    });
+
+    it(`/POST /family-tree/nodes/red-user-node-1/children should return 403`, async () => {
+      const requestBody: AddChildInputDto = {
+        childId: 'blue-user-node-2',
+      };
+      return request(app.getHttpServer())
+        .post('/family-tree/nodes/red-user-node-1/children')
+        .send(requestBody)
         .expect(403);
     });
   });
