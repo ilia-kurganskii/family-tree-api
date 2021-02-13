@@ -6,7 +6,6 @@ import { CreateNodeInputDto } from '@features/family-tree/dto/create-node.input.
 import { CreateTreeInputDto } from '@features/family-tree/dto/create-tree.input.dto';
 import { blueUser, redUser } from '@features/users/models/user.model.mock';
 import { INestApplication } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../../../../app.module';
@@ -20,24 +19,44 @@ describe('Family Tree', () => {
       data: {
         ...blueUser,
         trees: {
-          create: {
-            id: 'blue-user-tree-id',
-            name: 'Blue User Tree',
-            nodes: {
-              create: [
-                {
-                  id: 'blue-user-node-1',
-                  firstname: 'First',
-                  lastname: 'Node',
-                },
-                {
-                  id: 'blue-user-node-2',
-                  firstname: 'Second',
-                  lastname: 'Node',
-                },
-              ],
+          create: [
+            {
+              id: 'blue-user-tree-id',
+              name: 'Blue User Tree',
+              nodes: {
+                create: [
+                  {
+                    id: 'blue-user-node-1',
+                    firstname: 'First',
+                    lastname: 'Node',
+                  },
+                  {
+                    id: 'blue-user-node-2',
+                    firstname: 'Second',
+                    lastname: 'Node',
+                  },
+                ],
+              },
             },
-          },
+            {
+              id: 'second-blue-user-tree-id',
+              name: 'Second Blue User Tree',
+              nodes: {
+                create: [
+                  {
+                    id: 'second-blue-user-node-1',
+                    firstname: 'First',
+                    lastname: 'Node',
+                  },
+                  {
+                    id: 'second-blue-user-node-2',
+                    firstname: 'Second',
+                    lastname: 'Node',
+                  },
+                ],
+              },
+            },
+          ],
         },
       },
     });
@@ -72,20 +91,17 @@ describe('Family Tree', () => {
   };
 
   const clearDatabase = async () => {
-    const deleteUserBlue = prismaService.user.delete({
-      where: {
-        id: blueUser.id,
-      },
-    });
+    const deleteNodes = prismaService.node.deleteMany();
+    const deleteTrees = prismaService.tree.deleteMany();
+    const deleteUsers = prismaService.user.deleteMany();
 
-    const deleteUserRed = prismaService.user.delete({
-      where: {
-        id: redUser.id,
-      },
-    });
-
-    await prismaService.$transaction([deleteUserBlue, deleteUserRed]);
+    await prismaService.$transaction([deleteNodes, deleteTrees, deleteUsers]);
   };
+
+  afterAll(async () => {
+    await clearDatabase();
+    await app.close();
+  });
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -109,6 +125,11 @@ describe('Family Tree', () => {
           {
             id: 'blue-user-tree-id',
             name: 'Blue User Tree',
+            creatorId: blueUser.id,
+          },
+          {
+            id: 'second-blue-user-tree-id',
+            name: 'Second Blue User Tree',
             creatorId: blueUser.id,
           },
         ]);
@@ -214,7 +235,7 @@ describe('Family Tree', () => {
         .expect(200);
     });
 
-    it(`/POST /family-tree/nodes/red-user-node-1/children should return 403`, async () => {
+    it(`/POST /family-tree/nodes/red-user-node-1/children should return 403 for node of other user`, async () => {
       const requestBody: AddChildInputDto = {
         childId: 'blue-user-node-2',
       };
@@ -223,10 +244,15 @@ describe('Family Tree', () => {
         .send(requestBody)
         .expect(403);
     });
-  });
 
-  afterAll(async () => {
-    await clearDatabase();
-    await app.close();
+    it(`/POST /family-tree/nodes/blue-user-node-1/children should return 400 for nodes from different tree`, async () => {
+      const requestBody: AddChildInputDto = {
+        childId: 'second-blue-user-node-1',
+      };
+      return request(app.getHttpServer())
+        .post('/family-tree/nodes/blue-user-node-1/children')
+        .send(requestBody)
+        .expect(400);
+    });
   });
 });

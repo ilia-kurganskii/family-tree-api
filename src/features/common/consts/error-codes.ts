@@ -1,5 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const MAX_ID = 7;
+// increase the id after adding new code
+export const MAX_APPLICATION_ERROR_ID = 7;
 export enum ApplicationErrorCode {
   // USER
   AUTH_LOGIN_INCORRECT = 1,

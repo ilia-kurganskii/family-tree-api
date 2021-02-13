@@ -1,7 +1,7 @@
 import { ContextUser } from '@features/auth/decorators/user.decorator';
 import { JwtAuthGuard } from '@features/auth/guards/jwt-auth.guard';
 import { CheckAccess } from '@features/common/decorators/check-action.guard';
-import { AccessAction } from '@features/common/models/access-action';
+import { AccessActionModel } from '@features/common/models/access-action.model';
 import { AddChildInputDto } from '@features/family-tree/dto/add-child.input.dto';
 import { CreateNodeInputDto } from '@features/family-tree/dto/create-node.input.dto';
 import { CreateTreeInputDto } from '@features/family-tree/dto/create-tree.input.dto';
@@ -81,7 +81,7 @@ export class FamilyTreeController {
   }
 
   @UseGuards(TreeAccessGuard)
-  @CheckAccess(AccessAction.Update)
+  @CheckAccess(AccessActionModel.Update)
   @Post('/trees/:id/node')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
@@ -107,7 +107,7 @@ export class FamilyTreeController {
   }
 
   @UseGuards(TreeAccessGuard)
-  @CheckAccess(AccessAction.Read)
+  @CheckAccess(AccessActionModel.Read)
   @Get('/trees/:id/nodes')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -133,7 +133,7 @@ export class FamilyTreeController {
 
   @Post('/nodes/:id/children')
   @UseGuards(NodeAccessGuard)
-  @CheckAccess(AccessAction.Update)
+  @CheckAccess(AccessActionModel.Update)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Add child to node with :id',

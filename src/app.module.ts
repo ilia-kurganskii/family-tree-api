@@ -12,7 +12,7 @@ import {
 } from '@config/configuration.model';
 import { LoggerMiddleware } from '@features/common/services/logger/logger-middleware/logger.middleware';
 import { APP_FILTER } from '@nestjs/core';
-import { ApplicationExceptionFilter } from '@features/common/filters/application-exception.filter';
+import { ApplicationExceptionFilter } from '@features/common/filters/application-exception/application-exception.filter';
 
 @Module({
   imports: [

@@ -1,17 +1,17 @@
-import { AccessAction } from '@features/common/models/access-action';
+import { AccessActionModel } from '@features/common/models/access-action.model';
 import { ExecutionContext, SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 const METADATA_CHECK_ACTION_KEY = 'METADATA_ACTION_KEY';
 
-export const CheckAccess = (action: AccessAction) =>
+export const CheckAccess = (action: AccessActionModel) =>
   SetMetadata(METADATA_CHECK_ACTION_KEY, action);
 
 export function extractActionFromReflector(
   reflector: Reflector,
   context: ExecutionContext
-): AccessAction {
-  return reflector.get<AccessAction>(
+): AccessActionModel {
+  return reflector.get<AccessActionModel>(
     METADATA_CHECK_ACTION_KEY,
     context.getHandler()
   );

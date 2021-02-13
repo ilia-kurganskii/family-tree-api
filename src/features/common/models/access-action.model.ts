@@ -1,4 +1,4 @@
-export enum AccessAction {
+export enum AccessActionModel {
   Manage = 'manage',
   Create = 'create',
   Read = 'read',
