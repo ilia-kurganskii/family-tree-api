@@ -14,7 +14,7 @@
     "incremental": true,
     "paths": {
       "@features/*": ["features/*"],
-      "@config/*": ["config/*"],
+      "@config/*": ["config/*"]
     }
   },
   "exclude": ["node_modules", "dist", "graphql"]
