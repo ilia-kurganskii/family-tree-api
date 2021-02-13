@@ -2,9 +2,7 @@ name: Builds
 
 on:
   push:
-    branches: [github-workflow]
-  pull_request:
-    branches: [github-workflow]
+    branches: [develop, release/**]
 
 jobs:
 
