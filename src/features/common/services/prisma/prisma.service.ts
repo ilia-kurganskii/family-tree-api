@@ -6,7 +6,7 @@ import {
   Logger,
   Inject,
 } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaClientOptions } from '@prisma/client/runtime';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -15,8 +15,13 @@ import {
 } from '@config/configuration.model';
 import { Namespace } from 'cls-hooked';
 
-function buildPrismaOptions(config: LoggerConfig): PrismaClientOptions {
-  const options: PrismaClientOptions = {
+function buildPrismaOptions(
+  config: LoggerConfig
+): Prisma.Subset<PrismaClientOptions, Prisma.PrismaClientOptions> {
+  const options: Prisma.Subset<
+    PrismaClientOptions,
+    Prisma.PrismaClientOptions
+  > = {
     log: [],
   };
   if (config?.database?.query) {

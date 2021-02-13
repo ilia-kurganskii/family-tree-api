@@ -10,9 +10,9 @@ import {
   UpdateUserPayload,
 } from '@features/users/services/user/user.types';
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaClientKnownRequestError } from '@prisma/client';
 import { PasswordService } from '@features/auth/services/password/password.service';
 import { PrismaService } from '@features/common/services/prisma/prisma.service';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 @Injectable()
 export class UserService {
