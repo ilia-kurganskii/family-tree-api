@@ -1,0 +1,85 @@
+name: Tests
+
+on:
+  push:
+    branches: [develop, release/**]
+  pull_request:
+    branches: [develop, release/**]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    container: node:12.20.0
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm ci
+      - run: npm run prisma:generate
+      - run: npm test
+      - name: Archive unit-test coverage artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-unit-tests
+          path: |
+            coverage
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    container: node:12.20.0
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: prisma
+          POSTGRES_PASSWORD: topsecret
+          POSTGRES_DB: blog
+        ports:
+          - 5432:5432
+        # Add a health check
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm ci
+      - run: npm run prisma:generate
+      - name: Setup environment configuration
+        run: cp .e2e.env .env
+      - name: Setup database
+        run: ./run-migration.sh
+      - name: Run tests
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: "postgresql://prisma:topsecret@postgres:5432/blog?schema=blog&sslmode=prefer"
+          SECURITY_EXPRESS_IN: '2m'
+          SECURITY_REFRESH_IN: '7d'
+          SECURITY_SALT: 10
+          SECURITY_JWT_SECRET: '5900thaxIBz2'
+      - name: Archive unit-test coverage artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-e2e-tests
+          path: |
+            coverage/e2e
+
+  upload-coverage-result:
+    runs-on: ubuntu-latest
+    needs: [unit-tests, e2e-tests]
+    steps:
+      - name: Download e2e-test coverage artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage-e2e-tests
+          path: |
+            coverage/unit
+      - name: Download unit-test coverage artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage-unit-tests
+          path: |
+            coverage/e2e
+      - name: Run codacy-coverage-reporter
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: 'coverage/unit/lcov.info, coverage/e2e/lcov.info'
