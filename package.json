@@ -24,7 +24,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "migrate:dev": "prisma migrate dev --preview-feature",
+    "migrate:dev:apply": "prisma migrate dev --preview-feature",
     "migrate:dev:create": "prisma migrate dev --create-only --preview-feature",
     "prisma:studio": "npx prisma studio",
     "prisma:generate": "npx prisma generate",
@@ -32,12 +32,14 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --collect-coverage",
     "test:e2e": "jest --config jest-e2e.config.ts --collect-coverage --runInBand",
-    "docker": "docker-compose up -d",
     "docker:e2e": "docker-compose -f docker-compose.e2e.yml -p e2e up --abort-on-container-exit --exit-code-from app --renew-anon-volumes",
     "docker:build": "docker-compose build",
-    "docker:debug": "docker-compose  -f docker-compose.dev.yml up --force-recreate --build -d",
-    "docker:debug:stop": "docker-compose  -f docker-compose.dev.yml down ",
-    "docker:debug:stop-delete": "docker-compose  -f docker-compose.dev.yml down -v"
+    "docker:dev": "docker-compose  -f docker-compose.dev.yml up --force-recreate --build -d",
+    "docker:prisma:generate": "docker-compose  -f docker-compose.dev.yml exec family-tree-api npm run prisma:generate",
+    "docker:migrate:dev:create": "docker-compose  -f docker-compose.dev.yml exec family-tree-api npm run migrate:dev:create",
+    "docker:migrate:dev:apply": "docker-compose  -f docker-compose.dev.yml exec family-tree-api npm run migrate:dev:apply",
+    "docker:dev:stop": "docker-compose  -f docker-compose.dev.yml down ",
+    "docker:dev:uninstall": "docker-compose  -f docker-compose.dev.yml down -v"
   },
   "dependencies": {
     "@casl/ability": "^5.2.2",
