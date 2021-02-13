@@ -41,13 +41,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Install dependencies
       - run: npm ci
       - run: npm run prisma:generate
+      - name: Install dependencies
       - name: Setup environment configuration
         run: cp .e2e.env .env
       - name: Setup database
-        run: run-migration.sh
+        run: ./run-migration.sh
       - name: Run tests
         run: npm run test:e2e
         env:
