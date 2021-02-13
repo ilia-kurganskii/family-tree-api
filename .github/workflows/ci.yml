@@ -2,24 +2,61 @@ name: Node.js CI
 
 on:
   push:
-    branches: [master]
+    branches: [github-workflow]
   pull_request:
-    branches: [master]
+    branches: [github-workflow]
 
 jobs:
-  build:
+  unit-tests:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x]
+    container: node:12.20.0
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - run: npm run build
       - run: npm test
+      - name: Archive unit-test coverage artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-unit-tests
+          path: |
+            coverage
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    container: node:12.20.0
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: prisma
+          POSTGRES_PASSWORD: topsecret
+          POSTGRES_DB: blog
+        ports:
+          - 5432:5432
+        # Add a health check
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm ci
+      - name: Setup environment configuration
+        run: cp .e2e.env .env
+      - name: Setup database
+        run: run-migration.sh
+      - name: Run tests
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: "postgresql://prisma:topsecret@postgres:5432/blog?schema=blog&sslmode=prefer"
+          SECURITY_EXPRESS_IN: '2m'
+          SECURITY_REFRESH_IN: '7d'
+          SECURITY_SALT: 10
+          SECURITY_JWT_SECRET: '5900thaxIBz2'
+      - name: Archive unit-test coverage artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-e2e-tests
+          path: |
+            coverage/e2e
