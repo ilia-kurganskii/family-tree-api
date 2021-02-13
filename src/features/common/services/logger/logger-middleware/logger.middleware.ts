@@ -13,12 +13,8 @@ export class LoggerMiddleware implements NestMiddleware {
   ) {}
 
   use(req: Request, res: Response, next: NextFunction) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.clsNamespace.bind(req);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.clsNamespace.bind(res);
+    this.clsNamespace.bindEmitter(req);
+    this.clsNamespace.bindEmitter(res);
 
     const traceID = req.headers['x-request-id'] ?? uuid();
 

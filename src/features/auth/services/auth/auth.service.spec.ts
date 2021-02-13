@@ -1,16 +1,16 @@
-import { Test } from '@nestjs/testing';
-import { UserService } from '@features/users/services/user/user.service';
-import { PasswordService } from '@features/auth/services/password/password.service';
-import { PasswordServiceMock } from '@features/auth/services/password/password.service.mock';
-import { userMock } from '@features/users/models/user.model.mock';
-import { AuthService } from '@features/auth/services/auth/auth.service';
-import { UserServiceMock } from '@features/users/services/user/user.service.mock';
-import { ApplicationJwtService } from '@features/auth/services/jwt/application-jwt.service';
-import { JwtServiceMock } from '@features/auth/services/jwt/jwt.service.mock';
 import {
   IncorrectPassword,
   IncorrectUsername,
 } from '@features/auth/services/auth/auth.exceptions';
+import { AuthService } from '@features/auth/services/auth/auth.service';
+import { ApplicationJwtService } from '@features/auth/services/jwt/application-jwt.service';
+import { JwtServiceMock } from '@features/auth/services/jwt/jwt.service.mock';
+import { PasswordService } from '@features/auth/services/password/password.service';
+import { PasswordServiceMock } from '@features/auth/services/password/password.service.mock';
+import { blueUser } from '@features/users/models/user.model.mock';
+import { UserService } from '@features/users/services/user/user.service';
+import { UserServiceMock } from '@features/users/services/user/user.service.mock';
+import { Test } from '@nestjs/testing';
 
 describe('AuthService', () => {
   let userService: UserService;
@@ -46,7 +46,7 @@ describe('AuthService', () => {
   describe('signup', () => {
     it('should generate token for new user id', async () => {
       jest.spyOn(userService, 'createUser').mockResolvedValue({
-        ...userMock,
+        ...blueUser,
         id: 'newId',
       });
       jest.spyOn(jwtService, 'generateTokens');
@@ -65,7 +65,7 @@ describe('AuthService', () => {
   describe('login', () => {
     it('should generate token for existed user id', async () => {
       jest.spyOn(userService, 'findUserByEmail').mockResolvedValue({
-        ...userMock,
+        ...blueUser,
         id: 'existedId',
       });
       jest.spyOn(passwordService, 'validatePassword').mockResolvedValue(true);
@@ -93,7 +93,7 @@ describe('AuthService', () => {
     });
 
     it('should throw error when password is found', async () => {
-      jest.spyOn(userService, 'findUserByEmail').mockResolvedValue(userMock);
+      jest.spyOn(userService, 'findUserByEmail').mockResolvedValue(blueUser);
       jest.spyOn(passwordService, 'validatePassword').mockResolvedValue(false);
 
       await expect(

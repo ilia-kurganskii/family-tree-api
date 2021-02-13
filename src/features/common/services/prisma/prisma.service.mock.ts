@@ -3,4 +3,9 @@ export class PrismaServiceMock {
     create: () => Promise.resolve(),
     update: () => Promise.resolve(),
   };
+
+  node = {
+    create: () => Promise.resolve(),
+    update: () => Promise.resolve(),
+  };
 }

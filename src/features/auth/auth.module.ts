@@ -1,4 +1,4 @@
-import { PrismaService } from '../common/services/prisma/prisma.service';
+import { CommonModule } from '@features/common/common.module';
 import { PasswordService } from './services/password/password.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './services/auth/auth.service';
@@ -16,7 +16,6 @@ import { AuthController } from '@features/auth/controllers/auth.controller';
 import { DateScalar } from '@features/common/scalars/date.scalar';
 import { UserService } from '@features/users/services/user/user.service';
 import { ApplicationJwtService } from '@features/auth/services/jwt/application-jwt.service';
-import { LoggerModule } from '@features/common/services/logger/logger.module';
 
 @Module({
   imports: [
@@ -35,7 +34,7 @@ import { LoggerModule } from '@features/common/services/logger/logger.module';
       },
       inject: [ConfigService],
     }),
-    LoggerModule,
+    CommonModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -45,7 +44,6 @@ import { LoggerModule } from '@features/common/services/logger/logger.module';
     JwtStrategy,
     JwtAuthGuard,
     PasswordService,
-    PrismaService,
     DateScalar,
     UserService,
   ],

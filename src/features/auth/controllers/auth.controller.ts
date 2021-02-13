@@ -1,4 +1,11 @@
+import { ContextUser } from '@features/auth/decorators/user.decorator';
+import { LoginInputDto } from '@features/auth/dto/login.input.dto';
+import { SignupInputDto } from '@features/auth/dto/signup.input.dto';
+import { TokenOutputDto } from '@features/auth/dto/token.output.dto';
+import { JwtAuthGuard } from '@features/auth/guards/jwt-auth.guard';
 import { AuthService } from '@features/auth/services/auth/auth.service';
+import { UserOutputDto } from '@features/users/dto/user.output.dto';
+import { User } from '@features/users/models/user.model';
 import {
   Body,
   Controller,
@@ -9,19 +16,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '@features/auth/guards/jwt-auth.guard';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ContextUser } from '@features/auth/decorators/user.decorator';
-import { User } from '@features/users/models/user.model';
-import { TokenOutputDto } from '@features/auth/dto/token.output.dto';
-import { SignupInputDto } from '@features/auth/dto/signup.input.dto';
-import { LoginInputDto } from '@features/auth/dto/login.input.dto';
-import { UserOutputDto } from '@features/users/dto/user.output.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -31,13 +31,13 @@ export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
   @Post('/signup')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Registers a new user',
     description: 'Registers a new user in the system',
   })
   @ApiResponse({
-    status: 201,
+    status: HttpStatus.CREATED,
     description: 'Returns access and refresh tokens',
     type: TokenOutputDto,
   })
@@ -56,7 +56,7 @@ export class AuthController {
     description: 'Returns access and refresh tokens',
     type: TokenOutputDto,
   })
-  async login(@Body() data: LoginInputDto) {
+  async login(@Body() data: LoginInputDto): Promise<TokenOutputDto> {
     const { accessToken, refreshToken } = await this.auth.login({
       email: data.email.toLowerCase(),
       password: data.password,
@@ -75,7 +75,7 @@ export class AuthController {
     description: 'Returns a new access and refresh tokens',
     type: TokenOutputDto,
   })
-  async refreshToken(@Body('token') token: string) {
+  async refreshToken(@Body('token') token: string): Promise<TokenOutputDto> {
     return this.auth.refreshTokens(token);
   }
 
@@ -85,7 +85,7 @@ export class AuthController {
     summary: 'Returns current user profile',
   })
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.OK,
     type: UserOutputDto,
     description: 'Returns current user',
   })

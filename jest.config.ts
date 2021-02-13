@@ -16,7 +16,15 @@ const config: Config.InitialOptions = {
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
-  collectCoverageFrom: ['**/*.ts'],
+  collectCoverageFrom: [
+    '**/*.ts',
+    '!**/*.spec.ts',
+    '!**/*.mock.ts',
+    '!**/*.e2e-spec.ts',
+    '!**/node_modules/**',
+    '!**/vendor/**',
+    '!app/src/main.ts',
+  ],
   coveragePathIgnorePatterns: ['<rootDir>/node_modules'],
   coverageDirectory: './coverage',
   testEnvironment: 'node',
