@@ -43,7 +43,6 @@ jobs:
       - uses: actions/checkout@v2
       - run: npm ci
       - run: npm run prisma:generate
-      - name: Install dependencies
       - name: Setup environment configuration
         run: cp .e2e.env .env
       - name: Setup database
