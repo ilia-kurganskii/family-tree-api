@@ -61,3 +61,25 @@ jobs:
           name: coverage-e2e-tests
           path: |
             coverage/e2e
+
+  upload-coverage-result:
+    runs-on: ubuntu-latest
+    needs: [unit-tests, e2e-tests]
+    steps:
+      - name: Download e2e-test coverage artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage-e2e-tests
+          path: |
+            coverage/unit
+      - name: Download unit-test coverage artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage-unit-tests
+          path: |
+            coverage/e2e
+      - name: Run codacy-coverage-reporter
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: 'coverage/unit/lcov.info, coverage/e2e/lcov.info'
