@@ -1,7 +1,8 @@
+import { cookieExtractor } from '@features/auth/services/jwt/cookie.extractor';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { ConfigService } from '@nestjs/config';
 import {
   ConfigurationVariables,
@@ -12,7 +13,7 @@ import { User } from '@features/users/models/user.model';
 import { UserService } from '@features/users/services/user/user.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   private logger = new Logger(JwtStrategy.name);
 
   constructor(
@@ -21,7 +22,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     readonly configService: ConfigService<ConfigurationVariables>
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        cookieExtractor,
+        ExtractJwt.fromAuthHeaderAsBearerToken,
+      ]),
       secretOrKey: configService.get<SecurityConfig>('security').jwtSecret,
     });
   }

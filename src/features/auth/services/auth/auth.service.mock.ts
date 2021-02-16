@@ -12,6 +12,7 @@ export class AuthServiceMock implements IAuthService {
     return Promise.resolve({
       accessToken: '',
       refreshToken: '',
+      expiresIn: 10,
     });
   }
 
@@ -33,13 +34,15 @@ export class AuthServiceMock implements IAuthService {
     return Promise.resolve({
       accessToken: '',
       refreshToken: '',
+      expiresIn: 10,
     });
   }
 
-  refreshTokens(token: string): Token {
-    return {
+  refreshTokens(token: string): Promise<Token> {
+    return Promise.resolve({
       accessToken: '',
       refreshToken: '',
-    };
+      expiresIn: 10,
+    });
   }
 }

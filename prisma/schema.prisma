@@ -51,3 +51,9 @@ enum Role {
   ADMIN
   USER
 }
+
+model RefreshToken {
+   id           String   @id @default(cuid())
+   createdAt    DateTime @default(now())
+   user         User @relation(references: [id])
+}

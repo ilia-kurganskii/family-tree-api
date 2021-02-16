@@ -1,3 +1,4 @@
+BEGIN;
 -- CreateTable
 CREATE TABLE "Node" (
     "id" TEXT NOT NULL,
@@ -45,3 +46,4 @@ ALTER TABLE "_NodeRelation" ADD FOREIGN KEY("A")REFERENCES "Node"("id") ON DELET
 
 -- AddForeignKey
 ALTER TABLE "_NodeRelation" ADD FOREIGN KEY("B")REFERENCES "Node"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;

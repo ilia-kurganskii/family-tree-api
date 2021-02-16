@@ -12,6 +12,7 @@ Table User {
   lastname String
   role Role [not null]
   trees Tree
+  RefreshToken RefreshToken
 }
 
 Table Node {
@@ -37,6 +38,13 @@ Table Tree {
   nodes Node
 }
 
+Table RefreshToken {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  user User [not null]
+  userId String [not null]
+}
+
 Table NodeRelation {
   parentsId String [ref: > Node.id]
   childrenId String [ref: > Node.id]
@@ -50,3 +58,5 @@ Enum Role {
 Ref: Node.treeId > Tree.id
 
 Ref: Tree.creatorId > User.id
+
+Ref: RefreshToken.userId > User.id

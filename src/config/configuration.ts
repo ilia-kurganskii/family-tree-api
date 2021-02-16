@@ -29,10 +29,11 @@ const configuration: ConfigurationVariables = {
     sortSchema: process.env.GRAPHQL_SORT_SCHEMA === 'true',
   },
   security: {
-    expiresIn: process.env.SECURITY_EXPRESS_IN || '2m',
-    refreshIn: process.env.SECURITY_REFRESH_IN || '7d',
+    expiresIn: parseInt(process.env.SECURITY_EXPRESS_IN || '86400', 10), // 24h
     bcryptSaltOrRound: process.env.SECURITY_SALT || 10,
     jwtSecret: process.env.SECURITY_JWT_SECRET || 'jwt-secret',
+    jwtIssuer: process.env.SECURITY_JWT_ISSUER || 'http://localhost',
+    https: process.env.SECURITY_HTTPS === 'true',
   },
 };
 

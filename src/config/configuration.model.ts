@@ -39,8 +39,9 @@ export interface GraphqlConfig {
 }
 
 export interface SecurityConfig {
-  expiresIn: string;
-  refreshIn: string;
+  expiresIn: number;
   jwtSecret: string;
+  jwtIssuer: string;
   bcryptSaltOrRound: string | number;
+  https: boolean;
 }
