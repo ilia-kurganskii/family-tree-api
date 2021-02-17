@@ -165,7 +165,6 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Logout',
-    type: TokenOutputDto,
   })
   async logout(
     @Body() data: LogoutInputDto,
@@ -173,7 +172,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response
   ): Promise<void> {
     const refreshToken =
-      data?.refreshToken || request.cookies[REFRESH_TOKEN_COOKIE];
+      data?.refreshToken || request.cookies?.[REFRESH_TOKEN_COOKIE];
 
     await this.auth.logout({
       refreshToken,
