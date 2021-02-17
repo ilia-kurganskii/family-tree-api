@@ -1,9 +1,9 @@
-import { JwtAccessPayload } from '@features/auth/models/jwt-access.model';
+import { JwtAccessModel } from '@features/auth/models/jwt-access.model';
 import { Token } from '@features/auth/models/token.model';
 import { JwtRefreshModel } from '@features/auth/models/jwt-refresh.model';
 
 export class JwtServiceMock {
-  decodeAccessToken(accessToken: string): JwtAccessPayload {
+  decodeAccessToken(accessToken: string): JwtAccessModel {
     return {
       userId: '1',
     };
@@ -16,9 +16,10 @@ export class JwtServiceMock {
     };
   }
 
-  generateTokens(payload: JwtAccessPayload): Token {
+  generateTokens(payload: JwtAccessModel): Token {
     return {
       accessToken: 'access',
+      expiresIn: 95000,
       refreshToken: 'refresh',
     };
   }

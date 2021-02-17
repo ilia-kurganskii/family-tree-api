@@ -6,6 +6,9 @@ type AuthOutputDto {
   """JWT access token"""
   accessToken: String!
 
+  """JWT expires in seconds"""
+  expiresIn: Int!
+
   """JWT refresh token"""
   refreshToken: String!
   user: User!
@@ -44,6 +47,9 @@ input SignupInputDto {
 type TokenOutputDto {
   """JWT access token"""
   accessToken: String!
+
+  """JWT expires in seconds"""
+  expiresIn: Int!
 
   """JWT refresh token"""
   refreshToken: String!

@@ -1,3 +1,3 @@
-export interface JwtAccessPayload {
+export interface JwtAccessModel {
   userId: string;
 }

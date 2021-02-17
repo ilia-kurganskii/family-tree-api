@@ -167,4 +167,10 @@ describe('Auth', () => {
         .expect(200);
     });
   });
+
+  describe('POST /auth/logout', () => {
+    it('POST /auth/logout should return 200', async () => {
+      await request(app.getHttpServer()).post('/auth/logout').expect(200);
+    });
+  });
 });

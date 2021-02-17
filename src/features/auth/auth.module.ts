@@ -1,3 +1,4 @@
+import { RefreshTokenService } from '@features/auth/services/refresh-token/refresh-token.service';
 import { CommonModule } from '@features/common/common.module';
 import { PasswordService } from './services/password/password.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -6,7 +7,7 @@ import { AuthResolver } from './resolvers/auth.resolver';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './services/jwt.strategy';
+import { JwtStrategy } from './services/jwt/jwt.strategy';
 import { ConfigService } from '@nestjs/config';
 import {
   ConfigurationVariables,
@@ -41,6 +42,7 @@ import { ApplicationJwtService } from '@features/auth/services/jwt/application-j
     AuthService,
     AuthResolver,
     ApplicationJwtService,
+    RefreshTokenService,
     JwtStrategy,
     JwtAuthGuard,
     PasswordService,

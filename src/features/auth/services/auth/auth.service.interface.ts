@@ -9,5 +9,5 @@ export interface IAuthService {
   signup(payload: SignupPayload): Promise<Token>;
   login(payload: LoginPayload): Promise<Token>;
   getUserFromToken(token: string): Promise<User | null>;
-  refreshTokens(token: string): Token;
+  refreshTokens(token: string): Promise<Token>;
 }
