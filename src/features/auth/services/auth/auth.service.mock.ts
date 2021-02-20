@@ -1,4 +1,3 @@
-import { IAuthService } from '@features/auth/services/auth/auth.service.interface';
 import { Token } from '@features/auth/models/token.model';
 import {
   LoginPayload,
@@ -7,7 +6,7 @@ import {
 import { Role } from '@features/users/models/role.model';
 import { User } from '@features/users/models/user.model';
 
-export class AuthServiceMock implements IAuthService {
+export class AuthServiceMock {
   signup(payload: SignupPayload): Promise<Token> {
     return Promise.resolve({
       accessToken: '',

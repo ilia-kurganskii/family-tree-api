@@ -1,7 +1,8 @@
+import { UserOutputDto } from '@features/users/dto/user.output.dto';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class TokenOutputDto {
+export class LoggedUserOutputDto {
   @Field({ description: 'JWT access token' })
   accessToken: string;
 
@@ -10,4 +11,7 @@ export class TokenOutputDto {
 
   @Field({ description: 'JWT refresh token' })
   refreshToken: string;
+
+  @Field()
+  user: UserOutputDto;
 }

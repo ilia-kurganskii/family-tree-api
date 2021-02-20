@@ -11,8 +11,9 @@ import { ContextUser } from '@features/auth/decorators/user.decorator';
 import { LoginInputDto } from '@features/auth/dto/login.input.dto';
 import { LogoutInputDto } from '@features/auth/dto/logout.input.dto';
 import { SignupInputDto } from '@features/auth/dto/signup.input.dto';
-import { TokenOutputDto } from '@features/auth/dto/token.output.dto';
+import { LoggedUserOutputDto } from '@features/auth/dto/logged-user-output.dto';
 import { JwtAuthGuard } from '@features/auth/guards/jwt-auth.guard';
+import { Token } from '@features/auth/models/token.model';
 import { AuthService } from '@features/auth/services/auth/auth.service';
 import { UserOutputDto } from '@features/users/dto/user.output.dto';
 import { User } from '@features/users/models/user.model';
@@ -56,29 +57,24 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Returns access and refresh tokens',
-    type: TokenOutputDto,
+    type: LoggedUserOutputDto,
   })
   async signup(
     @Body() data: SignupInputDto,
     @Res({ passthrough: true }) response: Response
-  ): Promise<TokenOutputDto> {
+  ): Promise<LoggedUserOutputDto> {
     this.logger.log('signup');
 
-    const { accessToken, refreshToken, expiresIn } = await this.auth.signup({
+    const { token, user } = await this.auth.signup({
       email: data.email.toLowerCase(),
       password: data.password,
     });
 
-    this.addAuthCookieToResponse(response, {
-      accessToken,
-      refreshToken,
-      expiresIn,
-    });
+    this.addAuthCookieToResponse(response, token);
 
     return {
-      accessToken,
-      refreshToken,
-      expiresIn,
+      ...token,
+      user,
     };
   }
 
@@ -87,27 +83,22 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns access and refresh tokens',
-    type: TokenOutputDto,
+    type: LoggedUserOutputDto,
   })
   async login(
     @Body() data: LoginInputDto,
     @Res({ passthrough: true }) response: Response
-  ): Promise<TokenOutputDto> {
-    const { accessToken, refreshToken, expiresIn } = await this.auth.login({
+  ): Promise<LoggedUserOutputDto> {
+    const { user, token } = await this.auth.login({
       email: data.email.toLowerCase(),
       password: data.password,
     });
 
-    this.addAuthCookieToResponse(response, {
-      accessToken,
-      refreshToken,
-      expiresIn,
-    });
+    this.addAuthCookieToResponse(response, token);
 
     return {
-      accessToken,
-      refreshToken,
-      expiresIn,
+      ...token,
+      user,
     };
   }
 
@@ -116,32 +107,23 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns a new access and refresh tokens',
-    type: TokenOutputDto,
+    type: LoggedUserOutputDto,
   })
   async refreshToken(
     @Body('token') tokenFromBody: string,
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response
-  ): Promise<TokenOutputDto> {
+  ): Promise<LoggedUserOutputDto> {
     const oldRefreshToken =
       tokenFromBody || request.cookies[REFRESH_TOKEN_COOKIE];
 
-    const {
-      accessToken,
-      refreshToken,
-      expiresIn,
-    } = await this.auth.refreshTokens(oldRefreshToken);
+    const { token, user } = await this.auth.refreshTokens(oldRefreshToken);
 
-    this.addAuthCookieToResponse(response, {
-      accessToken,
-      refreshToken,
-      expiresIn,
-    });
+    this.addAuthCookieToResponse(response, token);
 
     return {
-      accessToken,
-      refreshToken,
-      expiresIn,
+      ...token,
+      user,
     };
   }
 
@@ -178,18 +160,11 @@ export class AuthController {
       refreshToken,
     });
 
-    response.cookie(ACCESS_TOKEN_COOKIE, '', {
-      ...this.getCommonCookieOptions(),
-      maxAge: -1,
-    });
-
-    response.cookie(REFRESH_TOKEN_COOKIE, '', {
-      ...this.getCommonCookieOptions(),
-      maxAge: -1,
-    });
+    response.clearCookie(ACCESS_TOKEN_COOKIE);
+    response.clearCookie(REFRESH_TOKEN_COOKIE);
   }
 
-  private addAuthCookieToResponse(response: Response, token: TokenOutputDto) {
+  private addAuthCookieToResponse(response: Response, token: Token) {
     const { accessToken, refreshToken, expiresIn } = token;
 
     response.cookie(ACCESS_TOKEN_COOKIE, accessToken, {

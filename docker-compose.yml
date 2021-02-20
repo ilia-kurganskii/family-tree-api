@@ -5,9 +5,21 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 3001:80
+      - 3001:3000
     depends_on:
       - postgres
+    env_file:
+      - .env
+
+  family-api-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    depends_on:
+      - family-api
+      - postgres
+    entrypoint: /app/run-migration.sh
     env_file:
       - .env
 

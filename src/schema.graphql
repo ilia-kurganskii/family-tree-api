@@ -22,6 +22,18 @@ input ChangePasswordInputDto {
 """Date custom scalar type"""
 scalar Date
 
+type LoggedUserOutputDto {
+  """JWT access token"""
+  accessToken: String!
+
+  """JWT expires in seconds"""
+  expiresIn: Int!
+
+  """JWT refresh token"""
+  refreshToken: String!
+  user: User!
+}
+
 input LoginInputDto {
   email: String!
   password: String!
@@ -30,7 +42,7 @@ input LoginInputDto {
 type Mutation {
   changePassword(data: ChangePasswordInputDto!): User!
   login(data: LoginInputDto!): AuthOutputDto!
-  refreshToken(token: String!): TokenOutputDto!
+  refreshToken(token: String!): LoggedUserOutputDto!
   signup(data: SignupInputDto!): AuthOutputDto!
   update(data: UpdateUserInputDto!): User!
 }
@@ -44,17 +56,6 @@ input SignupInputDto {
   password: String!
 }
 
-type TokenOutputDto {
-  """JWT access token"""
-  accessToken: String!
-
-  """JWT expires in seconds"""
-  expiresIn: Int!
-
-  """JWT refresh token"""
-  refreshToken: String!
-}
-
 input UpdateUserInputDto {
   firstname: String
   lastname: String
@@ -66,6 +67,5 @@ type User {
   firstname: String!
   id: ID!
   lastname: String!
-  role: String!
   updatedAt: Date!
 }

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PasswordService } from '../password/password.service';
-import { IAuthService } from '@features/auth/services/auth/auth.service.interface';
 import {
+  LoggedUserWithTokens,
   LoginPayload,
   LogoutPayload,
   SignupPayload,
@@ -17,7 +17,7 @@ import {
 } from '@features/auth/services/auth/auth.exceptions';
 
 @Injectable()
-export class AuthService implements IAuthService {
+export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
   constructor(
@@ -26,7 +26,10 @@ export class AuthService implements IAuthService {
     private readonly userService: UserService
   ) {}
 
-  public async signup({ password, email }: SignupPayload): Promise<Token> {
+  public async signup({
+    password,
+    email,
+  }: SignupPayload): Promise<LoggedUserWithTokens> {
     this.logger.log('signup');
     const hashedPassword = await this.passwordService.hashPassword(password);
 
@@ -35,12 +38,16 @@ export class AuthService implements IAuthService {
       password: hashedPassword,
     });
 
-    return this.jwtService.generateTokens({
+    const token = await this.jwtService.generateTokens({
       userId: user.id,
     });
+    return { user, token };
   }
 
-  public async login({ email, password }: LoginPayload): Promise<Token> {
+  public async login({
+    email,
+    password,
+  }: LoginPayload): Promise<LoggedUserWithTokens> {
     this.logger.log('login');
     const user = await this.userService.findUserByEmail(email);
 
@@ -57,9 +64,13 @@ export class AuthService implements IAuthService {
       throw new IncorrectPassword('Invalid password');
     }
 
-    return this.jwtService.generateTokens({
+    const token = await this.jwtService.generateTokens({
       userId: user.id,
     });
+    return {
+      token,
+      user,
+    };
   }
 
   public getUserFromToken(token: string): Promise<User> {
@@ -71,16 +82,23 @@ export class AuthService implements IAuthService {
     return null;
   }
 
-  public async refreshTokens(refreshToken: string): Promise<Token> {
+  public async refreshTokens(
+    refreshToken: string
+  ): Promise<LoggedUserWithTokens> {
     this.logger.log('refreshTokens');
     try {
       const { userId, databaseId } = await this.jwtService.verifyRefreshToken(
         refreshToken
       );
-      return await this.jwtService.refreshTokens({
+
+      const token = await this.jwtService.refreshTokens({
         userId,
         refreshTokenId: databaseId,
       });
+
+      const user = await this.userService.findUserById(userId);
+
+      return { user, token };
     } catch (e) {
       throw new IncorrectToken(e.message);
     }

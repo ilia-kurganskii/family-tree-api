@@ -8,7 +8,7 @@ import {
 import { AuthService } from '../services/auth/auth.service';
 import { SignupInputDto } from '@features/auth/dto/signup.input.dto';
 import { LoginInputDto } from '@features/auth/dto/login.input.dto';
-import { TokenOutputDto } from '@features/auth/dto/token.output.dto';
+import { LoggedUserOutputDto } from '@features/auth/dto/logged-user-output.dto';
 import { AuthOutputDto } from '@features/auth/dto/auth.output.dto';
 import { UserOutputDto } from '@features/users/dto/user.output.dto';
 
@@ -18,31 +18,31 @@ export class AuthResolver {
 
   @Mutation(() => AuthOutputDto)
   async signup(@Args('data') data: SignupInputDto) {
-    const { accessToken, refreshToken } = await this.auth.signup({
+    const { token } = await this.auth.signup({
       email: data.email.toLowerCase(),
       password: data.password,
     });
     return {
-      accessToken,
-      refreshToken,
+      accessToken: token.accessToken,
+      refreshToken: token.refreshToken,
     };
   }
 
   @Mutation(() => AuthOutputDto)
   async login(@Args('data') data: LoginInputDto) {
     const { email, password } = data;
-    const { accessToken, refreshToken } = await this.auth.login({
+    const { token } = await this.auth.login({
       email: email.toLowerCase(),
       password: password,
     });
 
     return {
-      accessToken,
-      refreshToken,
+      accessToken: token.accessToken,
+      refreshToken: token.refreshToken,
     };
   }
 
-  @Mutation(() => TokenOutputDto)
+  @Mutation(() => LoggedUserOutputDto)
   async refreshToken(@Args('token') token: string) {
     return this.auth.refreshTokens(token);
   }
