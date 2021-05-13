@@ -6,6 +6,9 @@ const configuration: ConfigurationVariables = {
   },
   cors: {
     enabled: process.env.CORS_ENABLED === 'true',
+    origins: process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(';')
+      : ['localhost:4200'],
   },
   logger: {
     database: {

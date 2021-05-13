@@ -44,7 +44,7 @@ async function bootstrap() {
   if (corsConfig.enabled) {
     app.enableCors({
       credentials: true,
-      origin: ['localhost', '127.0.0,1'],
+      origin: corsConfig.origins,
     });
   }
 

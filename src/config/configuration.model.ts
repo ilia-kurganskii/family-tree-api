@@ -21,6 +21,7 @@ export interface LoggerConfig {
 
 export interface CorsConfig {
   enabled: boolean;
+  origins: string[];
 }
 
 export interface SwaggerConfig {
