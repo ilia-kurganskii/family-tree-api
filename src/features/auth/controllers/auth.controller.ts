@@ -208,7 +208,7 @@ export class AuthController {
     return {
       secure: securityConfig.https,
       httpOnly: securityConfig.https,
-      sameSite: 'lax',
+      sameSite: securityConfig.https ? 'none' : undefined,
     };
   }
 }
