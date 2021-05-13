@@ -42,7 +42,10 @@ async function bootstrap() {
 
   // Cors
   if (corsConfig.enabled) {
-    app.enableCors();
+    app.enableCors({
+      credentials: true,
+      origin: ['localhost', '127.0.0,1'],
+    });
   }
 
   await app.listen(nestConfig.port);
