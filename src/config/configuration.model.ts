@@ -5,6 +5,13 @@ export interface ConfigurationVariables {
   swagger: SwaggerConfig;
   graphql: GraphqlConfig;
   security: SecurityConfig;
+  database: DatabaseConfig;
+}
+
+export interface DatabaseConfig {
+  host: string;
+  port: number;
+  database: string;
 }
 
 export interface NestConfig {

@@ -15,11 +15,14 @@ import {
 } from 'config/configuration.model';
 import { AuthController } from '@features/auth/controllers/auth.controller';
 import { DateScalar } from '@features/common/scalars/date.scalar';
-import { UserService } from '@features/users/services/user/user.service';
 import { ApplicationJwtService } from '@features/auth/services/jwt/application-jwt.service';
+import { UserModule } from '@features/users/user.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { RefreshToken } from '@features/auth/models/refresh-token.model';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([RefreshToken]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       useFactory: async (
@@ -36,6 +39,7 @@ import { ApplicationJwtService } from '@features/auth/services/jwt/application-j
       inject: [ConfigService],
     }),
     CommonModule,
+    UserModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -47,7 +51,6 @@ import { ApplicationJwtService } from '@features/auth/services/jwt/application-j
     JwtAuthGuard,
     PasswordService,
     DateScalar,
-    UserService,
   ],
   exports: [JwtAuthGuard],
 })

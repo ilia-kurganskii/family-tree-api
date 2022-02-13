@@ -1,3 +1,13 @@
-import { RefreshToken as RefreshTokenPrisma } from '@prisma/client';
+import { Column, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
 
-export type RefreshToken = RefreshTokenPrisma;
+@Entity()
+export class RefreshToken {
+  @ObjectIdColumn()
+  id: ObjectID;
+
+  @Column()
+  userId: string;
+
+  @Column()
+  token: string;
+}

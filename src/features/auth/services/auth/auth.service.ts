@@ -7,7 +7,7 @@ import {
   SignupPayload,
 } from '@features/auth/services/auth/auth.types';
 import { Token } from '@features/auth/models/token.model';
-import { User } from '@features/users/models/user.model';
+import { UserModel } from '@features/users/models/user.model';
 import { ApplicationJwtService } from '@features/auth/services/jwt/application-jwt.service';
 import { UserService } from '@features/users/services/user/user.service';
 import {
@@ -35,8 +35,10 @@ export class AuthService implements IAuthService {
       password: hashedPassword,
     });
 
+    this.logger.log(user);
+
     return this.jwtService.generateTokens({
-      userId: user.id,
+      userId: user.id.toString(),
     });
   }
 
@@ -58,11 +60,11 @@ export class AuthService implements IAuthService {
     }
 
     return this.jwtService.generateTokens({
-      userId: user.id,
+      userId: user.id.toString(),
     });
   }
 
-  public getUserFromToken(token: string): Promise<User> {
+  public getUserFromToken(token: string): Promise<UserModel> {
     this.logger.log('getUserFromToken');
     const tokenPayload = this.jwtService.decodeAccessToken(token);
     if (tokenPayload && tokenPayload.userId) {

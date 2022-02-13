@@ -17,5 +17,5 @@
       "@config/*": ["config/*"]
     }
   },
-  "exclude": ["node_modules", "dist", "graphql"]
+  "exclude": ["node_modules", "dist", "graphql", "*.e2e-spec.ts"]
 }

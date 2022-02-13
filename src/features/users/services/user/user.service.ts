@@ -1,5 +1,4 @@
-import { Role } from '@features/users/models/role.model';
-import { User } from '@features/users/models/user.model';
+import { RoleModel } from '@features/users/models/role.model';
 import {
   UserAlreadyExists,
   UserPasswordDoesNotMatch,
@@ -11,29 +10,30 @@ import {
 } from '@features/users/services/user/user.types';
 import { Injectable, Logger } from '@nestjs/common';
 import { PasswordService } from '@features/auth/services/password/password.service';
-import { PrismaService } from '@features/common/services/prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { UserModel } from '@features/users/models/user.model';
+import { MongoError, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { isMongoErrorWithCode } from '@features/common/utils/errors';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
 
   constructor(
-    private prisma: PrismaService,
+    @InjectRepository(UserModel)
+    private usersRepository: Repository<UserModel>,
     private passwordService: PasswordService
   ) {}
 
-  async createUser(data: CreateUserPayload): Promise<User> {
+  async createUser(data: CreateUserPayload): Promise<UserModel> {
     this.logger.log('createUser');
     try {
-      return await this.prisma.user.create({
-        data: {
-          ...data,
-          role: Role.USER,
-        },
+      return await this.usersRepository.save({
+        ...data,
+        role: RoleModel.USER,
       });
     } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
+      if (isMongoErrorWithCode(e, 11000)) {
         throw new UserAlreadyExists(`Email ${data.email} already used.`);
       } else {
         this.logger.error(e);
@@ -42,28 +42,23 @@ export class UserService {
     }
   }
 
-  async findUserById(userId: string): Promise<User> {
+  async findUserById(userId: string): Promise<UserModel> {
     this.logger.log('findUserById');
-    return this.prisma.user.findUnique({ where: { id: userId } });
+    return this.usersRepository.findOne(userId);
   }
 
-  async findUserByEmail(email: string): Promise<User> {
+  async findUserByEmail(email: string): Promise<UserModel> {
     this.logger.log('findUserByEmail');
-    return await this.prisma.user.findUnique({ where: { email } });
+    return await this.usersRepository.findOne({ email });
   }
 
-  async updateUser(payload: UpdateUserPayload): Promise<User> {
+  async updateUser(payload: UpdateUserPayload): Promise<UserModel> {
     this.logger.log('updateUser');
     const { userId, ...newUserData } = payload;
-    return this.prisma.user.update({
-      data: newUserData,
-      where: {
-        id: userId,
-      },
-    });
+    return this.usersRepository.save({ id: userId, ...newUserData });
   }
 
-  async changePassword(payload: ChangePasswordPayload) {
+  async changePassword(payload: ChangePasswordPayload): Promise<void> {
     this.logger.log('changePassword');
     const { userId, oldPassword, newPassword, currentPassword } = payload;
     const passwordValid = await this.passwordService.validatePassword(
@@ -77,11 +72,9 @@ export class UserService {
 
     const hashedPassword = await this.passwordService.hashPassword(newPassword);
 
-    return this.prisma.user.update({
-      data: {
-        password: hashedPassword,
-      },
-      where: { id: userId },
+    await this.usersRepository.save({
+      id: userId,
+      password: hashedPassword,
     });
   }
 }

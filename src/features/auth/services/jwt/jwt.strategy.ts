@@ -9,7 +9,7 @@ import {
   SecurityConfig,
 } from '@config/configuration.model';
 import { JwtInputDto } from '@features/auth/dto/jwt.input.dto';
-import { User } from '@features/users/models/user.model';
+import { UserModel } from '@features/users/models/user.model';
 import { UserService } from '@features/users/services/user/user.service';
 
 @Injectable()
@@ -30,13 +30,13 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: JwtInputDto): Promise<User> {
+  async validate(payload: JwtInputDto): Promise<UserModel> {
     this.logger.log('validate jwt payload');
     const user = await this.userService.findUserById(payload.userId);
     if (!user) {
       throw new UnauthorizedException();
     }
-    this.logger.log('logged as user with id: ' + user.id);
+    this.logger.log('logged as user with id: ' + String(user.id));
     return user;
   }
 }

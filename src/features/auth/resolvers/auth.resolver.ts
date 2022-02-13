@@ -10,7 +10,7 @@ import { SignupInputDto } from '@features/auth/dto/signup.input.dto';
 import { LoginInputDto } from '@features/auth/dto/login.input.dto';
 import { TokenOutputDto } from '@features/auth/dto/token.output.dto';
 import { AuthOutputDto } from '@features/auth/dto/auth.output.dto';
-import { UserOutputDto } from '@features/users/dto/user.output.dto';
+import { UserOutputDto } from '@features/users/dto/http/user.output.dto';
 
 @Resolver(() => AuthOutputDto)
 export class AuthResolver {

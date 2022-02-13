@@ -61,7 +61,7 @@ export class ApplicationJwtService {
 
     const refreshToken = this.signRefreshToken({
       userId: payload.userId,
-      databaseId: refreshTokenEntity.id,
+      databaseId: refreshTokenEntity.id.toString(),
     });
 
     return {
@@ -86,7 +86,7 @@ export class ApplicationJwtService {
 
     const refreshToken = this.signRefreshToken({
       userId: payload.userId,
-      databaseId: refreshTokenEntity.id,
+      databaseId: refreshTokenEntity.id.toString(),
     });
 
     return {
@@ -121,7 +121,7 @@ export class ApplicationJwtService {
     this.logger.log('signRefreshToken');
 
     return this.nestJwt.sign(payload, {
-      jwtid: payload.databaseId,
+      jwtid: String(payload.databaseId),
     });
   }
 }

@@ -14,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm ci
-      - run: npm run prisma:generate
       - run: npm test
       - name: Archive unit-test coverage artifacts
         uses: actions/upload-artifact@v2
@@ -28,21 +27,13 @@ jobs:
     container: node:12.20.0
 
     services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: prisma
-          POSTGRES_PASSWORD: topsecret
-          POSTGRES_DB: blog
-        ports:
-          - 5432:5432
-        # Add a health check
+      mongo:
+        image: mongo:latest
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - uses: actions/checkout@v2
       - run: npm ci
-      - run: npm run prisma:generate
       - name: Setup environment configuration
         run: cp .e2e.env .env
       - name: Setup database
@@ -50,7 +41,9 @@ jobs:
       - name: Run tests
         run: npm run test:e2e
         env:
-          DATABASE_URL: "postgresql://prisma:topsecret@postgres:5432/blog?schema=blog&sslmode=prefer"
+          DB_HOST: 'mongo'
+          DB_PORT: 27017
+          DB_DATABASE: 'nest'
           SECURITY_EXPRESS_IN: '2m'
           SECURITY_REFRESH_IN: '7d'
           SECURITY_SALT: 10

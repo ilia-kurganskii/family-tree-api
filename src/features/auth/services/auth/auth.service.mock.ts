@@ -4,8 +4,9 @@ import {
   LoginPayload,
   SignupPayload,
 } from '@features/auth/services/auth/auth.types';
-import { Role } from '@features/users/models/role.model';
-import { User } from '@features/users/models/user.model';
+import { RoleModel } from '@features/users/models/role.model';
+import { UserModel } from '@features/users/models/user.model';
+import { ObjectID } from 'typeorm';
 
 export class AuthServiceMock implements IAuthService {
   signup(payload: SignupPayload): Promise<Token> {
@@ -17,13 +18,13 @@ export class AuthServiceMock implements IAuthService {
   }
 
   // @ts-ignore
-  getUserFromToken(token: string): Promise<User> {
+  getUserFromToken(token: string): Promise<UserModel> {
     return Promise.resolve({
-      id: '0',
+      id: new ObjectID('0'),
       email: 'mock@gmail.com',
       firstname: 'Mock',
       lastname: 'User',
-      role: Role.USER,
+      role: RoleModel.USER,
       createdAt: new Date(),
       updatedAt: new Date(),
       password: 'password',

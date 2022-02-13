@@ -14,8 +14,8 @@ import { SignupInputDto } from '@features/auth/dto/signup.input.dto';
 import { TokenOutputDto } from '@features/auth/dto/token.output.dto';
 import { JwtAuthGuard } from '@features/auth/guards/jwt-auth.guard';
 import { AuthService } from '@features/auth/services/auth/auth.service';
-import { UserOutputDto } from '@features/users/dto/user.output.dto';
-import { User } from '@features/users/models/user.model';
+import { UserOutputDto } from '@features/users/dto/http/user.output.dto';
+import { UserModel } from '@features/users/models/user.model';
 import {
   Body,
   Controller,
@@ -36,6 +36,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CookieOptions, Request, Response } from 'express';
+import { RefreshTokenInputDto } from '@features/auth/dto/jwt.input.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -119,12 +120,12 @@ export class AuthController {
     type: TokenOutputDto,
   })
   async refreshToken(
-    @Body('token') tokenFromBody: string,
+    @Body() body: RefreshTokenInputDto,
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response
   ): Promise<TokenOutputDto> {
     const oldRefreshToken =
-      tokenFromBody || request.cookies[REFRESH_TOKEN_COOKIE];
+      body?.token || request.cookies[REFRESH_TOKEN_COOKIE];
 
     const {
       accessToken,
@@ -156,7 +157,7 @@ export class AuthController {
     description: 'Returns current user',
   })
   @ApiBearerAuth()
-  async me(@ContextUser() user: User) {
+  async me(@ContextUser() user: UserModel) {
     return user;
   }
 

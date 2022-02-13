@@ -1,28 +1,20 @@
-import { PrismaService } from '@features/common/services/prisma/prisma.service';
 import { blueUser } from '@features/users/models/user.model.mock';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../../../app.module';
+import { UserService } from '@features/users/services/user/user.service';
 
 describe('Auth', () => {
   let app: INestApplication;
-  let prismaService: PrismaService;
+  let userService: UserService;
 
   const prepareDatabase = async () => {
-    const createUserBlue = prismaService.user.create({
-      data: {
-        ...blueUser,
-      },
-    });
-
-    await prismaService.$transaction([createUserBlue]);
+    await userService.createUser(blueUser);
   };
 
   const clearDatabase = async () => {
-    const deleteUsers = prismaService.user.deleteMany();
-
-    await prismaService.$transaction([deleteUsers]);
+    // TODO: clear database
   };
 
   beforeAll(async () => {
@@ -31,7 +23,7 @@ describe('Auth', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
-    prismaService = moduleRef.get(PrismaService);
+    userService = moduleRef.get(UserService);
     await app.init();
     await prepareDatabase();
   });
@@ -108,14 +100,6 @@ describe('Auth', () => {
           password: 'new-password',
         })
         .expect(400);
-    });
-
-    afterAll(async () => {
-      await prismaService.user.delete({
-        where: {
-          email: 'new.user@example.com',
-        },
-      });
     });
   });
 

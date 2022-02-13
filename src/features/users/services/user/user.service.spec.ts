@@ -1,14 +1,20 @@
 import { Test } from '@nestjs/testing';
 import { UserService } from '@features/users/services/user/user.service';
-import { PrismaService } from '@features/common/services/prisma/prisma.service';
-import { PrismaServiceMock } from '@features/common/services/prisma/prisma.service.mock';
 import { PasswordService } from '@features/auth/services/password/password.service';
 import { PasswordServiceMock } from '@features/auth/services/password/password.service.mock';
 import { UserPasswordDoesNotMatch } from '@features/users/services/user/user.exceptions';
+import { Repository } from 'typeorm';
+import { UserModel } from '@features/users/models/user.model';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import Mock = jest.Mock;
+import { repositoryMockFactory } from '@features/common/mocks/repository-mock';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 
 describe('UserService', () => {
   let userService: UserService;
-  let prismaService: PrismaService;
+  let userRepository: Repository<UserModel>;
   let passwordService: PasswordService;
 
   beforeEach(async () => {
@@ -16,8 +22,8 @@ describe('UserService', () => {
       providers: [
         UserService,
         {
-          provide: PrismaService,
-          useClass: PrismaServiceMock,
+          provide: getRepositoryToken(UserModel),
+          useFactory: repositoryMockFactory,
         },
         {
           provide: PasswordService,
@@ -27,13 +33,15 @@ describe('UserService', () => {
     }).compile();
 
     userService = moduleRef.get(UserService);
-    prismaService = moduleRef.get(PrismaService);
+    userRepository = moduleRef.get<Repository<UserModel>>(
+      getRepositoryToken(UserModel)
+    );
     passwordService = moduleRef.get(PasswordService);
   });
 
   describe('changePassword', () => {
     it('should change password (Positive)', async () => {
-      jest.spyOn(prismaService.user, 'update');
+      jest.spyOn(userRepository, 'save');
       jest.spyOn(passwordService, 'validatePassword').mockResolvedValue(true);
       jest
         .spyOn(passwordService, 'hashPassword')
@@ -46,11 +54,9 @@ describe('UserService', () => {
         currentPassword: 'oldPassword',
       });
 
-      expect(prismaService.user.update).toHaveBeenCalledWith({
-        data: {
-          password: 'newHashPassword',
-        },
-        where: { id: '1' },
+      expect(userRepository.save).toHaveBeenCalledWith({
+        password: 'newHashPassword',
+        id: '1',
       });
     });
 

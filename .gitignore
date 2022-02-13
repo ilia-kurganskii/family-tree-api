@@ -1,9 +1,7 @@
 node_modules/
 dist/
-prisma/*.db
 coverage/
 .idea/
 .DS_Store
 
-prisma/migrations/dev/
 .env

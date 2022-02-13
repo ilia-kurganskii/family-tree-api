@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
-import { Role } from '@features/users/models/role.model';
+import { RoleModel } from '@features/users/models/role.model';
 
 @ObjectType('User')
 export class UserOutputDto {
@@ -23,9 +23,9 @@ export class UserOutputDto {
 
   @Field()
   @ApiProperty({
-    enum: Role,
+    enum: RoleModel,
   })
-  role: Role;
+  role: RoleModel;
 
   @HideField()
   password: string;

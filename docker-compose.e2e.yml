@@ -8,12 +8,12 @@ services:
       - .:/app
       - /app/node_modules
     depends_on:
-      - postgres
+      - mongo
     env_file:
       - .e2e.env
 
-  postgres:
-    image: postgres:13
+  mongo:
+    image: mongo:latest
     env_file:
       - .e2e.env
 

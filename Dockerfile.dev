@@ -1,4 +1,4 @@
-FROM node:12.20.0
+FROM node:14.18.2
 
 # Create app directory
 WORKDIR /app
@@ -8,11 +8,6 @@ COPY package*.json ./
 
 # Install app dependencies
 RUN npm install
-
-COPY prisma ./prisma/
-
-# Required if not done in postinstall
-RUN npx prisma generate
 
 EXPOSE 3000
 EXPOSE 9229

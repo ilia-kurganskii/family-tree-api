@@ -7,9 +7,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-COPY prisma ./prisma/
-RUN npm run prisma:generate
-
 COPY . .
 
 RUN npm run build
@@ -25,7 +22,6 @@ COPY --chown=node:node package*.json ./
 RUN npm install --production
 
 COPY  --chown=node:node --from=builder /app/dist ./
-COPY  --chown=node:node --from=builder /app/node_modules/.prisma/client ./node_modules/.prisma/client
 
 ENV NODE_ENV production
 EXPOSE 80

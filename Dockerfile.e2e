@@ -9,11 +9,6 @@ COPY package*.json ./
 # Install app dependencies
 RUN npm install
 
-COPY prisma ./prisma/
-
-# Required if not done in postinstall
-RUN npx prisma generate
-
 COPY . .
 ENTRYPOINT ["/app/run-migration.sh"]
 CMD [ "npm", "run", "test:e2e" ]

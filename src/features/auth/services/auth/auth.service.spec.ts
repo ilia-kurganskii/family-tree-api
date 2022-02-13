@@ -11,6 +11,7 @@ import { blueUser } from '@features/users/models/user.model.mock';
 import { UserService } from '@features/users/services/user/user.service';
 import { UserServiceMock } from '@features/users/services/user/user.service.mock';
 import { Test } from '@nestjs/testing';
+import { ObjectID } from 'mongodb';
 
 describe('AuthService', () => {
   let userService: UserService;
@@ -45,9 +46,10 @@ describe('AuthService', () => {
 
   describe('signup', () => {
     it('should generate token for new user id', async () => {
+      const newId = new ObjectID();
       jest.spyOn(userService, 'createUser').mockResolvedValue({
         ...blueUser,
-        id: 'newId',
+        id: newId,
       });
       jest.spyOn(jwtService, 'generateTokens');
 
@@ -57,16 +59,17 @@ describe('AuthService', () => {
       });
 
       expect(jwtService.generateTokens).toHaveBeenCalledWith({
-        userId: 'newId',
+        userId: newId.toString(),
       });
     });
   });
 
   describe('login', () => {
     it('should generate token for existed user id', async () => {
+      const existedId = new ObjectID();
       jest.spyOn(userService, 'findUserByEmail').mockResolvedValue({
         ...blueUser,
-        id: 'existedId',
+        id: existedId,
       });
       jest.spyOn(passwordService, 'validatePassword').mockResolvedValue(true);
       jest.spyOn(jwtService, 'generateTokens');
@@ -77,7 +80,7 @@ describe('AuthService', () => {
       });
 
       expect(jwtService.generateTokens).toHaveBeenCalledWith({
-        userId: 'existedId',
+        userId: existedId.toString(),
       });
     });
 

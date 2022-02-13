@@ -10,6 +10,11 @@ const configuration: ConfigurationVariables = {
       ? process.env.CORS_ORIGINS.split(';')
       : ['localhost:4200'],
   },
+  database: {
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT ?? '27017'),
+    database: process.env.DB_DATABASE,
+  },
   logger: {
     database: {
       info: process.env.LOGGER_DATABASE_INFO_ENABLED === 'true',

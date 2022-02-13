@@ -8,35 +8,34 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from '@config/configuration';
 import {
   ConfigurationVariables,
-  GraphqlConfig,
+  DatabaseConfig,
 } from '@config/configuration.model';
 import { LoggerMiddleware } from '@features/common/services/logger/logger-middleware/logger.middleware';
 import { APP_FILTER } from '@nestjs/core';
 import { ApplicationExceptionFilter } from '@features/common/filters/application-exception/application-exception.filter';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
-    GraphQLModule.forRootAsync({
-      useFactory: async (
-        configService: ConfigService<ConfigurationVariables>
-      ) => {
-        const graphqlConfig = configService.get<GraphqlConfig>('graphql');
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigService],
+      useFactory: (configService: ConfigService<ConfigurationVariables>) => {
+        const databaseConfig = configService.get<DatabaseConfig>('database');
         return {
-          buildSchemaOptions: {
-            numberScalarMode: 'integer',
-          },
-          sortSchema: graphqlConfig.sortSchema,
-          autoSchemaFile: graphqlConfig.schemaDestination,
-          debug: graphqlConfig.debug,
-          playground: graphqlConfig.playgroundEnabled,
-          context: ({ req }) => ({ req }),
+          type: 'mongodb',
+          host: databaseConfig.host,
+          port: databaseConfig.port,
+          database: databaseConfig.database,
+          autoLoadEntities: true,
+          synchronize: true,
+          useUnifiedTopology: true,
         };
       },
       inject: [ConfigService],
     }),
-    AuthModule,
     UserModule,
+    AuthModule,
     CommonModule,
     FamilyTreeModule,
   ],

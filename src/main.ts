@@ -14,7 +14,9 @@ import {
 import { WinstonLoggerService } from '@features/common/services/logger/winston-logger/winston-logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
   app.useLogger(app.get(WinstonLoggerService));
 
   // Validation

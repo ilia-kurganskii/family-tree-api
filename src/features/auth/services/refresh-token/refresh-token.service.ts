@@ -4,24 +4,26 @@ import {
   GetRefreshTokenByIdPayload,
   RecreateRefreshTokenPayload,
   RemoveRefreshTokenPayload,
-} from '@features/auth/services/refresh-token/refresh-token.types';
-import { PrismaService } from '@features/common/services/prisma/prisma.service';
+} from '@features/auth/services/refresh-token/refresh-token.service.types';
 import { Injectable, Logger } from '@nestjs/common';
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ObjectID } from 'mongodb';
 @Injectable()
 export class RefreshTokenService {
   private readonly logger = new Logger(RefreshTokenService.name);
 
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    @InjectRepository(RefreshToken)
+    private readonly refreshTokenRepository: Repository<RefreshToken>
+  ) {}
 
-  public createRefreshToken(
+  public async createRefreshToken(
     payload: CreateRefreshTokenPayload
   ): Promise<RefreshToken> {
     this.logger.log('createRefreshToken');
-    return this.prismaService.refreshToken.create({
-      data: {
-        userId: payload.userId,
-      },
+    return this.refreshTokenRepository.save({
+      userId: payload.userId,
     });
   }
 
@@ -29,47 +31,30 @@ export class RefreshTokenService {
     payload: RecreateRefreshTokenPayload
   ): Promise<RefreshToken> {
     this.logger.log('recreateRefreshToken');
-    const removeToken = this.prismaService.refreshToken.delete({
-      where: {
-        id: payload.tokenId,
-      },
+
+    await this.refreshTokenRepository.delete(payload.tokenId);
+
+    const createdToken = await this.refreshTokenRepository.save({
+      userId: payload.userId,
     });
 
-    const createToken = this.prismaService.refreshToken.create({
-      data: {
-        userId: payload.userId,
-      },
-    });
+    this.logger.log('token' + createdToken);
 
-    const [refreshTokenEntity] = await this.prismaService.$transaction([
-      createToken,
-      removeToken,
-    ]);
-
-    return refreshTokenEntity;
+    return createdToken;
   }
 
   public async removeRefreshToken(
     payload: RemoveRefreshTokenPayload
   ): Promise<void> {
     this.logger.log('removeRefreshToken');
-    await this.prismaService.refreshToken.delete({
-      where: {
-        id: payload.tokenId,
-      },
-    });
+    await this.refreshTokenRepository.delete(payload.tokenId);
   }
 
   public async isRefreshTokenExist(
     payload: GetRefreshTokenByIdPayload
   ): Promise<boolean> {
-    this.logger.log('isRefreshTokenExist');
-    const token = await this.prismaService.refreshToken.findFirst({
-      where: {
-        id: payload.tokenId,
-        userId: payload.userId,
-      },
-    });
-    return !!token;
+    this.logger.log(`isRefreshTokenExist`);
+    const token = await this.refreshTokenRepository.findOne(payload.tokenId);
+    return token?.userId === payload.userId;
   }
 }
